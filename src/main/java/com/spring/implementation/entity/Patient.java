@@ -1,6 +1,7 @@
 package com.spring.implementation.entity;
 
 
+import com.spring.implementation.dto.PatientDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,5 +29,27 @@ public class Patient {
 //    @ToString.Exclude
 //    private Set<Appointment> appointments = new HashSet<>();
 
+
+    public static PatientDTO toDTO(Patient patient){
+        return PatientDTO.builder()
+                .patientId(patient.getPatientId())
+                .fullName(patient.getFullName())
+                .age(patient.getAge())
+                .gender(patient.getGender())
+                .phoneNumber(patient.getPhoneNumber())
+                .email(patient.getEmail())
+                .build();
+
+    }
+
+    public static Patient toEntity(PatientDTO patientDTO){
+        return Patient.builder()
+                .fullName(patientDTO.getFullName())
+                .age(patientDTO.getAge())
+                .gender(patientDTO.getGender())
+                .phoneNumber(patientDTO.getPhoneNumber())
+                .email(patientDTO.getEmail())
+                .build();
+    }
 
 }
