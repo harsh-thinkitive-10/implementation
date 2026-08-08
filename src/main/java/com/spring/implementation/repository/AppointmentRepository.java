@@ -10,14 +10,11 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
 
-//    @Query(value = """
-//            Select * from appointment a
-//                        where a.patient_id = :id
-//            """, nativeQuery = true)
-
-        @Query(value = """
-            Select a from Appointment a
-                        where a.patient.patientId = :id
-            """)
+    @Query(value = """
+            Select * from appointment a
+                        where a.patient_id = :id
+            """, nativeQuery = true)
     List<Appointment> findAppointmentByPatientPatientId(Long id);
+
+
 }

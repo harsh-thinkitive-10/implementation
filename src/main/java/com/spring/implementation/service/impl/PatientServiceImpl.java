@@ -14,7 +14,7 @@ public class PatientServiceImpl implements PatientService{
     private final PatientRepository patientRepository;
 
     @Override
-    public List<PatientDTO> getAllStudent() {
+    public List<PatientDTO> getAllPatient() {
         List<Patient> patients = patientRepository.findAll();
         List<PatientDTO> patientDTOS = new ArrayList<>();
         for(Patient patient : patients){
@@ -22,4 +22,37 @@ public class PatientServiceImpl implements PatientService{
         }
         return patientDTOS;
     }
+
+    @Override
+    public PatientDTO getPatientById(Long id) {
+        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        return Patient.toDTO(patient);
+    }
+
+    @Override
+    public void addNewPatient(PatientDTO patientDTO) {
+        Patient patient = Patient.builder()
+                .fullName(patientDTO.getFullName())
+                .age(patientDTO.getAge())
+                .gender(patientDTO.getGender())
+                .phoneNumber(patientDTO.getPhoneNumber())
+                .email(patientDTO.getEmail())
+                .build();
+        patientRepository.save(patient);
+    }
+
+    @Override
+    public PatientDTO updatePatientName(Long id, String name) {
+        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        patient.setFullName(name);
+        return Patient.toDTO(patient);
+    }
+
+    @Override
+    public void deletePatient(Long id) {
+        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        patientRepository.delete(patient);
+    }
+
+
 }
