@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequestMapping("/patients")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class PatientController {
 
 
@@ -36,7 +38,7 @@ public class PatientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PatientDTO> patch(@RequestBody PatientDTO patientDTO, @PathVariable Long id) {
+    public ResponseEntity<PatientDTO> patch(@RequestBody @Validated PatientDTO patientDTO, @PathVariable Long id) {
         return ResponseEntity.ok(patientService.updatePatientName(id,patientDTO));
     }
 

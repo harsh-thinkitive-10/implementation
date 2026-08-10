@@ -2,6 +2,7 @@ package com.spring.implementation.service.impl;
 
 import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.entity.Patient;
+import com.spring.implementation.exception.PatientNotFoundException;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
@@ -33,7 +34,7 @@ public class PatientServiceImpl implements PatientService{
     @Override
     @Transactional()
     public PatientDTO getPatientById(Long id) {
-        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        Patient patient = patientRepository.findById(id).orElseThrow(()->new PatientNotFoundException(String.format("Patient not found with id %d",id)));
         patient.setFullName("Bablu");
         return Patient.toDTO(patient);
     }
