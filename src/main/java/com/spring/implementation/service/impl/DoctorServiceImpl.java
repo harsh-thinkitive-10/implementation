@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService{
@@ -30,9 +29,14 @@ public class DoctorServiceImpl implements DoctorService{
     }
 
     @Override
-    public void updateDoctorsConsultationFee(Long id, Double fees) {
-        Optional<Doctor> doctor = Optional.ofNullable(doctorRepository.findDoctorById(id));
-        doctor.ifPresent(doctor1 -> doctor1.setConsultationFee(fees));
+    public DoctorDTO updateDoctorsConsultationFee(Long id, DoctorDTO doctorDTO) {
+       Doctor doctor = doctorRepository.findById(id).orElseThrow(()->new RuntimeException("Doctor not found"));
+       if(doctorDTO.getFullName()!=null) doctor.setFullName(doctorDTO.getFullName());
+       if(doctorDTO.getSpecialization()!=null) doctor.setSpecialization(doctorDTO.getSpecialization());
+       if(doctorDTO.getPhoneNumber()!=null) doctor.setPhoneNumber(doctorDTO.getPhoneNumber());
+       if(doctorDTO.getEmail()!=null) doctor.setEmail(doctorDTO.getEmail());
+       if(doctorDTO.getConsultationFee()!=null) doctor.setConsultationFee(doctorDTO.getConsultationFee());
+       return Doctor.toDto(doctorRepository.save(doctor));
     }
 
     @Override
@@ -40,6 +44,5 @@ public class DoctorServiceImpl implements DoctorService{
         if(doctorRepository.existsById(id)) throw new RuntimeException("Doctor not found.");
         doctorRepository.deleteDoctorById(id);
     }
-
 
 }

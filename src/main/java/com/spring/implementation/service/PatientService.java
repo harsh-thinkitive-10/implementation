@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface PatientService {
 
     List<PatientDTO> getAllPatient();
 
     PatientDTO getPatientById(Long id);
 
-    void addNewPatient(PatientDTO patientDTO);
+    PatientDTO addNewPatient(PatientDTO patientDTO);
 
-    PatientDTO updatePatientName(Long id,String name);
+    PatientDTO updatePatientName(Long id,PatientDTO patientDTO);
 
     void deletePatient(Long id);
 

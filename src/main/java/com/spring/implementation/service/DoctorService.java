@@ -13,7 +13,7 @@ public interface DoctorService {
 
     DoctorDTO findDoctorById(Long id);
 
-    void updateDoctorsConsultationFee(Long id,Double fees);
+    DoctorDTO updateDoctorsConsultationFee(Long id,DoctorDTO doctorDTO);
 
     void deleteDoctorById(Long id);
 }
