@@ -3,6 +3,7 @@ package com.spring.implementation.controller;
 import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/patients")
 @RequiredArgsConstructor
+@Slf4j
 public class PatientController {
 
 
@@ -23,6 +25,7 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
+        log.info("User id:{} id is calling api:", id);
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
