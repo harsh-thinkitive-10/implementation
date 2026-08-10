@@ -24,7 +24,7 @@ public class PatientDTO {
 
     private String gender;
 
-    @NonNull
+
     private String phoneNumber;
 
     @Email(message = "invalid main")
