@@ -1,0 +1,42 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 002-create-doctor
+      author: harsh
+
+      changes:
+
+        - createTable:
+            tableName: doctor
+
+            columns:
+
+              - column:
+                  name: doctor_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: specialization
+                  type: VARCHAR(255)
+
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+
+              - column:
+                  name: consultation_fee
+                  type: DECIMAL(10,2)

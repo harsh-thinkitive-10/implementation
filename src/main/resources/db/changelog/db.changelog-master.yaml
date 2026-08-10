@@ -1,0 +1,13 @@
+databaseChangeLog:
+
+  - include:
+      file: db/changelog/changes/001-create-patient.yaml
+
+  - include:
+      file: db/changelog/changes/002-create-doctor.yaml
+
+  - include:
+      file: db/changelog/changes/003-create-appointment.yaml
+
+  - include:
+      file: db/changelog/changes/004-create-prescription.yaml

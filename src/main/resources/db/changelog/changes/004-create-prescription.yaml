@@ -1,0 +1,58 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 004-create-prescription
+      author: harsh
+
+      changes:
+
+        - createTable:
+            tableName: prescription
+
+            columns:
+
+              - column:
+                  name: prescription_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: medicine_name
+                  type: VARCHAR(255)
+
+              - column:
+                  name: dosage
+                  type: VARCHAR(255)
+
+              - column:
+                  name: frequency
+                  type: VARCHAR(255)
+
+              - column:
+                  name: duration
+                  type: INT
+
+              - column:
+                  name: instructions
+                  type: VARCHAR(1000)
+
+              - column:
+                  name: appointment_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: prescription
+            baseColumnNames: appointment_id
+            referencedTableName: appointment
+            referencedColumnNames: appointment_id
+            constraintName: fk_prescription_appointment
+
+        - addUniqueConstraint:
+            tableName: prescription
+            columnNames: appointment_id
+            constraintName: uk_prescription_appointment

@@ -8,13 +8,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class DoctorDTO {
-
-    private Long doctorId;
 
     @NotBlank
     private String fullName;
@@ -28,5 +28,5 @@ public class DoctorDTO {
     @Email(message = "invalid email")
     private String email;
 
-    private Double consultationFee;
+    private BigDecimal consultationFee;
 }

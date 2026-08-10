@@ -9,6 +9,7 @@ import com.spring.implementation.repository.AppointmentRepository;
 import com.spring.implementation.repository.DoctorRepository;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.AppointmentService;
+import com.spring.implementation.service.PatientService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -35,6 +37,9 @@ public class AppointmentTest {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private PatientService patientService;
+
     @Test
     @Commit
     public void addNewAppointment(){
@@ -48,40 +53,18 @@ public class AppointmentTest {
         appointment.setStatus("SCHEDULED");
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
-
-//        patient.getAppointments().add(appointment);
-//        doctor.getAppointments().add(appointment);
-
         appointmentRepository.save(appointment);
-    }
-
-
-    @Test
-    @Commit
-    public void getAllPatientAppointments(){
-        long id = 3;
-        List<Appointment> appointment = appointmentRepository.findAppointmentByPatientPatientId(id);
-        log.info("Appointment size : {}", appointment.size());
-
-        for (Appointment appointment1 : appointment) {
-            log.info("Appointment for patient name : {}", appointment1.getPatient().getFullName());
-            log.info("Appointment for doctor : {}", appointment1.getDoctor().getFullName());
-            log.info("Appointment date : {}", appointment1.getAppointmentDate());
-        }
     }
 
     @Test
     public void getAppointmentByPatientId(){
         Long id = 2L;
-        List<AppointmentView> patient = appointmentRepository.findAppointmentForPatientByPatientId(id);
-        //patient.stream().forEach(System.out::println);
-        for (AppointmentView a : patient) {
-            log.info("patient name: {}",a.getPatientName());
-            log.info("doctor name: {}",a.getDoctorName());
-            log.info("appointment date: {}",a.getAppointmentDate());
-            log.info("patient name: {} doctor name: {} appointment date: {}",a.getPatientName(),a.getDoctorName(),a.getAppointmentDate());
+        List<AppointmentView> appointmentViews = appointmentRepository.findAppointmentForPatientByPatientId(id);
+        List<AppointmentResponseDTO> appointmentResponseDTOS = new ArrayList<>();
+        for (AppointmentView appointmentView : appointmentViews){
+            appointmentResponseDTOS.add(AppointmentResponseDTO.convertToDTO(appointmentView));
         }
-
+        appointmentResponseDTOS.forEach(System.out::println);
     }
 
 }

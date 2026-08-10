@@ -1,0 +1,62 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 003-create-appointment
+      author: harsh
+
+      changes:
+
+        - createTable:
+            tableName: appointment
+
+            columns:
+
+              - column:
+                  name: appointment_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: appointment_date
+                  type: DATE
+
+              - column:
+                  name: appointment_time
+                  type: TIME
+
+              - column:
+                  name: reason_for_visit
+                  type: VARCHAR(500)
+
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: doctor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: appointment
+            baseColumnNames: patient_id
+            referencedTableName: patient
+            referencedColumnNames: patient_id
+            constraintName: fk_appointment_patient
+
+        - addForeignKeyConstraint:
+            baseTableName: appointment
+            baseColumnNames: doctor_id
+            referencedTableName: doctor
+            referencedColumnNames: doctor_id
+            constraintName: fk_appointment_doctor

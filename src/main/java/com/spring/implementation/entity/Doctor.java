@@ -4,8 +4,10 @@ import com.spring.implementation.dto.DoctorDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+@Table(name = "doctor")
 @Entity
 @Data
 @Builder
@@ -20,11 +22,10 @@ public class Doctor {
     private String specialization;
     private String phoneNumber;
     private String email;
-    private Double consultationFee;
+    private BigDecimal consultationFee;
 
     public static DoctorDTO toDto(Doctor doctor){
         return DoctorDTO.builder()
-                .doctorId(doctor.getDoctorId())
                 .fullName(doctor.getFullName())
                 .specialization(doctor.getSpecialization())
                 .phoneNumber(doctor.getPhoneNumber())
@@ -35,7 +36,6 @@ public class Doctor {
 
     public static Doctor toEntity(DoctorDTO doctorDTO){
         return Doctor.builder()
-                .doctorId(doctorDTO.getDoctorId())
                 .fullName(doctorDTO.getFullName())
                 .specialization(doctorDTO.getSpecialization())
                 .phoneNumber(doctorDTO.getPhoneNumber())

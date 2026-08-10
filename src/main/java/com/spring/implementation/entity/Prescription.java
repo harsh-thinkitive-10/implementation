@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+@Table(name = "prescription")
 @Entity
 @Data
 public class Prescription {

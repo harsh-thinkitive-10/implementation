@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Table(name = "patient")
 @Entity
 @Data
 @NoArgsConstructor
@@ -28,7 +29,6 @@ public class Patient {
 
     public static PatientDTO toDTO(Patient patient){
         return PatientDTO.builder()
-                .patientId(patient.getPatientId())
                 .fullName(patient.getFullName())
                 .age(patient.getAge())
                 .gender(patient.getGender())

@@ -13,8 +13,6 @@ import lombok.*;
 @Builder
 public class PatientDTO {
 
-    private Long patientId;
-
     @NotBlank(message = "Name is required")
     private String fullName;
 
@@ -23,8 +21,6 @@ public class PatientDTO {
     private Integer age;
 
     private String gender;
-
-
 
     private String phoneNumber;
 

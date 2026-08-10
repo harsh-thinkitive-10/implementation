@@ -1,0 +1,42 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 001-create-patient
+      author: harsh
+
+      changes:
+
+        - createTable:
+            tableName: patient
+
+            columns:
+
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: age
+                  type: INT
+
+              - column:
+                  name: gender
+                  type: VARCHAR(50)
+
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)

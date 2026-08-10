@@ -1,18 +1,17 @@
 package com.spring.implementation.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Table(name = "appointment")
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Appointment {
 
     @Id
@@ -30,9 +29,4 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
-
-//    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-//    @ToString.Exclude
-//    private Prescription prescription;
-
 }
