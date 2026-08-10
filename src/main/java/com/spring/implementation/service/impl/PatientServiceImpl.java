@@ -7,6 +7,7 @@ import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PatientServiceImpl implements PatientService{
 
 
     @Override
+    @Cacheable(cacheNames = "get patient")
     public List<PatientDTO> getAllPatient() {
         List<Patient> patients = patientRepository.findAll();
         List<PatientDTO> patientDTOS = new ArrayList<>();
@@ -29,8 +31,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     @Override
+    @Transactional()
     public PatientDTO getPatientById(Long id) {
         Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        patient.setFullName("Bablu");
         return Patient.toDTO(patient);
     }
 

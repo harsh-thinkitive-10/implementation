@@ -2,6 +2,7 @@ package com.spring.implementation.controller;
 
 import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class PatientController {
     }
 
     @PostMapping()
-    public ResponseEntity<PatientDTO> addNewPatient(@RequestBody PatientDTO patientDTO) {
+    public ResponseEntity<PatientDTO> addNewPatient(@RequestBody @Valid PatientDTO patientDTO) {
         return ResponseEntity.ok(patientService.addNewPatient(patientDTO));
     }
 

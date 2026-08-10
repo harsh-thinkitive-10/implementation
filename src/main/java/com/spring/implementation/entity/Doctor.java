@@ -22,11 +22,6 @@ public class Doctor {
     private String email;
     private Double consultationFee;
 
-
-//    @OneToMany(mappedBy = "doctor")
-//    @ToString.Exclude
-//    private List<Appointment> appointments;
-
     public static DoctorDTO toDto(Doctor doctor){
         return DoctorDTO.builder()
                 .doctorId(doctor.getDoctorId())

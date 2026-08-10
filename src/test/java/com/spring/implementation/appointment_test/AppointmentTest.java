@@ -1,11 +1,14 @@
 package com.spring.implementation.appointment_test;
 
+import com.spring.implementation.dto.AppointmentResponseDTO;
+import com.spring.implementation.dto.projection.AppointmentView;
 import com.spring.implementation.entity.Appointment;
 import com.spring.implementation.entity.Doctor;
 import com.spring.implementation.entity.Patient;
 import com.spring.implementation.repository.AppointmentRepository;
 import com.spring.implementation.repository.DoctorRepository;
 import com.spring.implementation.repository.PatientRepository;
+import com.spring.implementation.service.AppointmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class AppointmentTest {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     @Test
     @Commit
@@ -62,7 +68,19 @@ public class AppointmentTest {
             log.info("Appointment for doctor : {}", appointment1.getDoctor().getFullName());
             log.info("Appointment date : {}", appointment1.getAppointmentDate());
         }
+    }
 
+    @Test
+    public void getAppointmentByPatientId(){
+        Long id = 2L;
+        List<AppointmentView> patient = appointmentRepository.findAppointmentForPatientByPatientId(id);
+        //patient.stream().forEach(System.out::println);
+        for (AppointmentView a : patient) {
+            log.info("patient name: {}",a.getPatientName());
+            log.info("doctor name: {}",a.getDoctorName());
+            log.info("appointment date: {}",a.getAppointmentDate());
+            log.info("patient name: {} doctor name: {} appointment date: {}",a.getPatientName(),a.getDoctorName(),a.getAppointmentDate());
+        }
 
     }
 

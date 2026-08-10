@@ -5,11 +5,13 @@ import com.spring.implementation.entity.Doctor;
 import com.spring.implementation.repository.DoctorRepository;
 import com.spring.implementation.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Service
 public class DoctorServiceImpl implements DoctorService{
 
     private final DoctorRepository doctorRepository;

@@ -24,10 +24,6 @@ public class Patient {
     private String gender;
     private String phoneNumber;
     private String email;
-//
-//    @OneToMany(mappedBy = "patient")
-//    @ToString.Exclude
-//    private Set<Appointment> appointments = new HashSet<>();
 
 
     public static PatientDTO toDTO(Patient patient){
