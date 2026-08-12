@@ -1,9 +1,11 @@
 package com.spring.implementation.service.impl;
 
 import com.spring.implementation.dto.PatientDTO;
-import com.spring.implementation.entity.Patient;
+import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.entity.PatientEntity;
 import com.spring.implementation.exception.PatientNotFoundException;
 import com.spring.implementation.repository.PatientRepository;
+import com.spring.implementation.service.AuthService;
 import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +15,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class PatientServiceImpl implements PatientService{
 
     private final PatientRepository patientRepository;
+    private final AuthService authService;
 
 
     @Override
     @Cacheable(cacheNames = "get patient")
     public List<PatientDTO> getAllPatient() {
-        List<Patient> patients = patientRepository.findAll();
+        List<PatientEntity> patients = patientRepository.findAll();
         List<PatientDTO> patientDTOS = new ArrayList<>();
-        for(Patient patient : patients){
-            patientDTOS.add(Patient.toDTO(patient));
+        for(PatientEntity patient : patients){
+            patientDTOS.add(PatientEntity.toDTO(patient));
         }
         return patientDTOS;
     }
@@ -34,40 +38,46 @@ public class PatientServiceImpl implements PatientService{
     @Override
     @Transactional()
     public PatientDTO getPatientById(Long id) {
-        Patient patient = patientRepository.findById(id).orElseThrow(()->new PatientNotFoundException(String.format("Patient not found with id %d",id)));
-        patient.setFullName("Bablu");
-        return Patient.toDTO(patient);
+        PatientEntity patient = patientRepository.findById(id).orElseThrow(()->new PatientNotFoundException(String.format("Patient not found with id %d",id)));
+        return PatientEntity.toDTO(patient);
     }
 
     @Transactional(rollbackOn = Exception.class)
     @Override
-    public PatientDTO addNewPatient(@NonNull PatientDTO patientDTO) {
-        Patient patient = Patient.builder()
-                .fullName(patientDTO.getFullName())
-                .age(patientDTO.getAge())
-                .gender(patientDTO.getGender())
-                .phoneNumber(patientDTO.getPhoneNumber())
-                .email(patientDTO.getEmail())
+    public PatientDTO registerNewPatient(@NonNull RegisterPatient patientRequest) {
+        String userId = authService.registerPatient(patientRequest);
+        PatientEntity patient = PatientEntity.builder().fullName(patientRequest.getFirstName()+" " + patientRequest.getLastName())
+                .age(patientRequest.getAge())
+                .gender(patientRequest.getGender())
+                .phoneNumber(patientRequest.getPhoneNumber())
+                .email(patientRequest.getEmail())
+                .keycloakUserId(userId)
                 .build();
-        return Patient.toDTO(patientRepository.save(patient));
+        return PatientEntity.toDTO(patientRepository.save(patient));
     }
 
     @Transactional(rollbackOn = Exception.class)
     @Override
     public PatientDTO updatePatientName(Long id,PatientDTO patientDTO) {
-        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        PatientEntity patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
         if(patientDTO.getFullName()!=null) patient.setFullName(patientDTO.getFullName());
         if(patientDTO.getGender()!=null) patient.setGender(patientDTO.getGender());
         if(patientDTO.getEmail()!=null) patient.setEmail(patientDTO.getEmail());
         if(patientDTO.getAge()!=null) patient.setAge(patientDTO.getAge());
         if(patientDTO.getPhoneNumber()!=null) patient.setPhoneNumber(patientDTO.getPhoneNumber());
-        return Patient.toDTO(patientRepository.save(patient));
+        return PatientEntity.toDTO(patientRepository.save(patient));
     }
 
     @Transactional(rollbackOn = Exception.class)
     @Override
     public void deletePatient(Long id) {
-        Patient patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
+        PatientEntity patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
         patientRepository.delete(patient);
+    }
+
+    @Override
+    public PatientDTO GetKeyCloakId(String keyCloakUserId) {
+        PatientEntity patient = patientRepository.findByKeycloakUserId(keyCloakUserId).orElseThrow(()->new PatientNotFoundException("Patient Not Found"));
+        return PatientEntity.toDTO(patient);
     }
 }

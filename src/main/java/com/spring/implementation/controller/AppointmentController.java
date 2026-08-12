@@ -7,13 +7,14 @@ import com.spring.implementation.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/appointment")
+@RequestMapping("/api/v1/appointment")
 @RequiredArgsConstructor
 public class AppointmentController {
 
@@ -24,12 +25,15 @@ public class AppointmentController {
         return ResponseEntity.of(Optional.ofNullable(appointmentService.findAllAppointment()));
     }
 
+
+    @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/patient/{id}")
     public ResponseEntity<List<AppointmentView>> getAllAppointmentsByPatientId(@PathVariable Long id) {
         List<AppointmentView> appointmentView = appointmentService.findAppointmentForPatientByPatientId(id);
         return ResponseEntity.ok(appointmentView);
     }
 
+    @PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/doctor/{id}")
     public ResponseEntity<List<AppointmentView>> getAllAppointmentsByDoctorId(@PathVariable Long id) {
         return ResponseEntity.of(Optional.ofNullable(appointmentService.findAppointmentForDoctorByDoctorId(id)));

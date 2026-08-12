@@ -1,8 +1,6 @@
 package com.spring.implementation.service;
 
 import com.spring.implementation.dto.DoctorDTO;
-import com.spring.implementation.entity.Doctor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

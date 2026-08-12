@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-keycloak-user-id
+      author: harsh
+
+      changes:
+        - addColumn:
+            tableName: doctor
+            columns:
+              - column:
+                  name: keycloak_user_id
+                  type: VARCHAR(255)
+
+        - addUniqueConstraint:
+            tableName: doctor
+            columnNames: keycloak_user_id
+            constraintName: uk_doctor_keycloak_user

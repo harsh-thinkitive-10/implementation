@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Table(name = "doctor")
 @Entity
@@ -13,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Doctor {
+public class DoctorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,14 @@ public class Doctor {
     private String email;
     private BigDecimal consultationFee;
 
-    public static DoctorDTO toDto(Doctor doctor){
+    @Column(
+            name = "keycloak_user_id",
+            nullable = false,
+            unique = true
+    )
+    private String keycloakUserId;
+
+    public static DoctorDTO toDto(DoctorEntity doctor){
         return DoctorDTO.builder()
                 .fullName(doctor.getFullName())
                 .specialization(doctor.getSpecialization())
@@ -34,8 +40,8 @@ public class Doctor {
                 .build();
     }
 
-    public static Doctor toEntity(DoctorDTO doctorDTO){
-        return Doctor.builder()
+    public static DoctorEntity toEntity(DoctorDTO doctorDTO){
+        return DoctorEntity.builder()
                 .fullName(doctorDTO.getFullName())
                 .specialization(doctorDTO.getSpecialization())
                 .phoneNumber(doctorDTO.getPhoneNumber())

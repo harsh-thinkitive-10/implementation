@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-keycloak-user-id
+      author: harsh
+      changes:
+        - addColumn:
+            tableName: patient
+            columns:
+              - column:
+                  name: keycloak_user_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true

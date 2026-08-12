@@ -5,17 +5,13 @@ import com.spring.implementation.dto.PatientDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Table(name = "patient")
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Patient {
+public class PatientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +21,11 @@ public class Patient {
     private String gender;
     private String phoneNumber;
     private String email;
+    @Column(name = "keycloak_user_id", unique = true, nullable = false)
+    private String keycloakUserId;
 
 
-    public static PatientDTO toDTO(Patient patient){
+    public static PatientDTO toDTO(PatientEntity patient){
         return PatientDTO.builder()
                 .fullName(patient.getFullName())
                 .age(patient.getAge())
@@ -38,8 +36,8 @@ public class Patient {
 
     }
 
-    public static Patient toEntity(PatientDTO patientDTO){
-        return Patient.builder()
+    public static PatientEntity toEntity(PatientDTO patientDTO){
+        return PatientEntity.builder()
                 .fullName(patientDTO.getFullName())
                 .age(patientDTO.getAge())
                 .gender(patientDTO.getGender())

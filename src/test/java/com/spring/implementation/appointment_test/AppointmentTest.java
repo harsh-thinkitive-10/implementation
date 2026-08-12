@@ -2,9 +2,9 @@ package com.spring.implementation.appointment_test;
 
 import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.projection.AppointmentView;
-import com.spring.implementation.entity.Appointment;
-import com.spring.implementation.entity.Doctor;
-import com.spring.implementation.entity.Patient;
+import com.spring.implementation.entity.AppointmentEntity;
+import com.spring.implementation.entity.DoctorEntity;
+import com.spring.implementation.entity.PatientEntity;
 import com.spring.implementation.repository.AppointmentRepository;
 import com.spring.implementation.repository.DoctorRepository;
 import com.spring.implementation.repository.PatientRepository;
@@ -43,10 +43,10 @@ public class AppointmentTest {
     @Test
     @Commit
     public void addNewAppointment(){
-        Patient patient = patientRepository.findById(3L).orElseThrow(()->new RuntimeException("not found"));
-        Doctor doctor = doctorRepository.findById(2L).orElseThrow(()->new RuntimeException("not found"));
+        PatientEntity patient = patientRepository.findById(3L).orElseThrow(()->new RuntimeException("not found"));
+        DoctorEntity doctor = doctorRepository.findById(2L).orElseThrow(()->new RuntimeException("not found"));
 
-        Appointment appointment = new Appointment();
+        AppointmentEntity appointment = new AppointmentEntity();
 
         appointment.setAppointmentDate(LocalDate.of(2026, 8, 10));
         appointment.setAppointmentTime(LocalTime.of(10, 30));

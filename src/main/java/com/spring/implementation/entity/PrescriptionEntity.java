@@ -8,7 +8,7 @@ import lombok.ToString;
 @Table(name = "prescription")
 @Entity
 @Data
-public class Prescription {
+public class PrescriptionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +22,5 @@ public class Prescription {
     @OneToOne
     @JoinColumn(name = "appointment_id")
     @ToString.Exclude
-    private Appointment appointment;
+    private AppointmentEntity appointment;
 }
