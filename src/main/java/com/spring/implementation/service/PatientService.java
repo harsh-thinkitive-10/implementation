@@ -20,4 +20,6 @@ public interface PatientService {
 
     PatientDTO GetKeyCloakId(String keyCloakUserId);
 
+    String getKeycloakUserId(Long patientId);
+
 }

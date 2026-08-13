@@ -32,7 +32,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.GetKeyCloakId(keyCloakUserId));
     }
 
-    @PreAuthorize("hasRole('ADMIIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/patients")
     public ResponseEntity<List<PatientDTO>> get() {
         return ResponseEntity.ok(patientService.getAllPatient());

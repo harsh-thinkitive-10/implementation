@@ -80,4 +80,19 @@ public class PatientServiceImpl implements PatientService{
         PatientEntity patient = patientRepository.findByKeycloakUserId(keyCloakUserId).orElseThrow(()->new PatientNotFoundException("Patient Not Found"));
         return PatientEntity.toDTO(patient);
     }
+    @Override
+    public String getKeycloakUserId(Long patientId) {
+
+        String keycloakUserId =
+                patientRepository.findKeycloakUserIdByPatientId(patientId);
+
+        if (keycloakUserId == null) {
+            throw new RuntimeException(
+                    "Keycloak user not found for patient ID: "
+                            + patientId
+            );
+        }
+
+        return keycloakUserId;
+    }
 }
