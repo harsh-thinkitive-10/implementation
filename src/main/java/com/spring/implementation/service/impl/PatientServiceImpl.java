@@ -1,13 +1,16 @@
 package com.spring.implementation.service.impl;
 
 import com.spring.implementation.dto.PatientDTO;
+import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.dto.projection.PatientDashboardProjection;
 import com.spring.implementation.entity.PatientEntity;
 import com.spring.implementation.exception.PatientNotFoundException;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.AuthService;
 import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Builder
 public class PatientServiceImpl implements PatientService{
 
     private final PatientRepository patientRepository;
@@ -58,13 +62,29 @@ public class PatientServiceImpl implements PatientService{
 
     @Transactional(rollbackOn = Exception.class)
     @Override
-    public PatientDTO updatePatientName(Long id,PatientDTO patientDTO) {
-        PatientEntity patient = patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found."));
-        if(patientDTO.getFullName()!=null) patient.setFullName(patientDTO.getFullName());
-        if(patientDTO.getGender()!=null) patient.setGender(patientDTO.getGender());
-        if(patientDTO.getEmail()!=null) patient.setEmail(patientDTO.getEmail());
-        if(patientDTO.getAge()!=null) patient.setAge(patientDTO.getAge());
-        if(patientDTO.getPhoneNumber()!=null) patient.setPhoneNumber(patientDTO.getPhoneNumber());
+    public PatientDTO updatePatient(String keycloakUserId, PatientDTO patientDTO) {
+        PatientEntity patient = patientRepository.findByKeycloakUserId(keycloakUserId).orElseThrow(() -> new RuntimeException("Patient not found."));
+
+        if (patientDTO.getFullName() != null) {
+            patient.setFullName(patientDTO.getFullName());
+        }
+
+        if (patientDTO.getGender() != null) {
+            patient.setGender(patientDTO.getGender());
+        }
+
+        if (patientDTO.getEmail() != null) {
+            patient.setEmail(patientDTO.getEmail());
+        }
+
+        if (patientDTO.getAge() != null) {
+            patient.setAge(patientDTO.getAge());
+        }
+
+        if (patientDTO.getPhoneNumber() != null) {
+            patient.setPhoneNumber(patientDTO.getPhoneNumber());
+        }
+
         return PatientEntity.toDTO(patientRepository.save(patient));
     }
 
@@ -94,5 +114,18 @@ public class PatientServiceImpl implements PatientService{
         }
 
         return keycloakUserId;
+    }
+
+    @Override
+    public PatientDashboardDTO getMyDashboard(
+            String keycloakUserId
+    ) {
+
+        PatientDashboardProjection projection =
+                patientRepository.getPatientDashboard(
+                        keycloakUserId
+                );
+
+        return PatientDashboardDTO.toDTO(projection);
     }
 }

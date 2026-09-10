@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: add-uuid-column-patient-table
+      author: harsh
+      changes:
+        # 1. Add UUID column
+        - addColumn:
+            tableName: patient
+            columns:
+              - column:
+                  name: uuid
+                  type: UUID
+
+        # 2. Generate UUID for existing patients
+        - sql:
+            sql: >
+              UPDATE patient
+              SET uuid = UUID()
+              WHERE uuid IS NULL;
+

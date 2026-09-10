@@ -6,6 +6,7 @@ import com.spring.implementation.dto.LoginResponseDTO;
 import com.spring.implementation.dto.RegisterRequest;
 import com.spring.implementation.exception.UserNameAlreadyExitsException;
 import com.spring.implementation.service.IamService;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -161,17 +162,18 @@ public class IamServiceImpl implements IamService {
                         + keycloakProperties.getRealm()
                         + "/protocol/openid-connect/token";
 
+        log.info("Keycloak token URL: {}", tokenUrl);
+        log.info("Keycloak login client: {}", keycloakProperties.getLoginClientId());
+        log.info("Login username: {}", request.getUsername());
+
         return webClientBuilder
                 .build()
                 .post()
                 .uri(tokenUrl)
-                .contentType(
-                        MediaType.APPLICATION_FORM_URLENCODED
-                )
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(
                         BodyInserters.fromFormData(
-                                        "grant_type",
-                                        "password"
+                                        "grant_type", "password"
                                 )
                                 .with(
                                         "client_id",
@@ -187,6 +189,23 @@ public class IamServiceImpl implements IamService {
                                 )
                 )
                 .retrieve()
+                .onStatus(
+                        status -> status.isError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error(
+                                            "Keycloak login failed. Status={}, Body={}",
+                                            response.statusCode(),
+                                            errorBody
+                                    );
+
+                                    return reactor.core.publisher.Mono.error(
+                                            new RuntimeException(
+                                                    "Keycloak login failed: "
+                                                            + errorBody
+                                            ));
+                                })
+                )
                 .bodyToMono(LoginResponseDTO.class)
                 .block();
     }
@@ -209,5 +228,113 @@ public class IamServiceImpl implements IamService {
                 .resetPassword(credential);
     }
 
+    @Override
+    public void changePassword(
+            String keycloakUserId,
+            String currentPassword,
+            String newPassword
+    ) {
+
+        // 1. Get user from Keycloak
+        UserRepresentation user =
+                keycloak
+                        .realm(keycloakProperties.getRealm())
+                        .users()
+                        .get(keycloakUserId)
+                        .toRepresentation();
+
+        String username = user.getUsername();
+
+        if (username == null || username.isBlank()) {
+            throw new RuntimeException(
+                    "Username not found for Keycloak user: "
+                            + keycloakUserId
+            );
+        }
+
+        // 2. Verify current password
+        verifyCurrentPassword(
+                username,
+                currentPassword
+        );
+
+        // 3. Create new password credential
+        CredentialRepresentation credential =
+                new CredentialRepresentation();
+
+        credential.setType(
+                CredentialRepresentation.PASSWORD
+        );
+
+        credential.setValue(newPassword);
+
+        credential.setTemporary(false);
+
+        // 4. Change password
+        keycloak
+                .realm(keycloakProperties.getRealm())
+                .users()
+                .get(keycloakUserId)
+                .resetPassword(credential);
+
+        log.info(
+                "Password changed successfully. userId={}",
+                keycloakUserId
+        );
+    }
+
+
+    private void verifyCurrentPassword(
+            String username,
+            String currentPassword
+    ) {
+
+        String tokenUrl =
+                keycloakProperties.getServerUrl()
+                        + "/realms/"
+                        + keycloakProperties.getRealm()
+                        + "/protocol/openid-connect/token";
+
+        try {
+
+            webClientBuilder
+                    .build()
+                    .post()
+                    .uri(tokenUrl)
+                    .contentType(
+                            MediaType.APPLICATION_FORM_URLENCODED
+                    )
+                    .body(
+                            BodyInserters.fromFormData(
+                                            "grant_type",
+                                            "password"
+                                    )
+                                    .with(
+                                            "client_id",
+                                            keycloakProperties
+                                                    .getLoginClientId()
+                                    )
+                                    .with(
+                                            "username",
+                                            username
+                                    )
+                                    .with(
+                                            "password",
+                                            currentPassword
+                                    )
+                    )
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+        } catch (Exception e) {
+
+            throw new BadRequestException(
+                    "Current password is incorrect"
+            );
+        }
+    }
+
 
 }
+

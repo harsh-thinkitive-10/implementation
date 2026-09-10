@@ -1,8 +1,10 @@
 package com.spring.implementation.entity;
 
+import com.spring.implementation.dto.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -17,10 +19,11 @@ public class AppointmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appointmentId;
-    private LocalDate appointmentDate;
-    private LocalTime appointmentTime;
+    private Instant appointmentDate;
     private String reasonForVisit;
-    private String status;
+
+    @Enumerated(value = EnumType.STRING)
+    private AppointmentStatus status;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")

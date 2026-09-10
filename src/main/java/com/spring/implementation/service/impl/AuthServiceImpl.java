@@ -1,12 +1,15 @@
 package com.spring.implementation.service.impl;
 
+import com.spring.implementation.dto.ChangePasswordResponseDTO;
 import com.spring.implementation.dto.LoginDTO;
 import com.spring.implementation.dto.LoginResponseDTO;
 import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.exception.NewAndOldPasswordSameException;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.AuthService;
 import com.spring.implementation.service.IamService;
 import com.spring.implementation.service.PatientService;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -51,4 +54,24 @@ public class AuthServiceImpl implements AuthService {
                 newPassword
         );
     }
+    @Override
+    public ChangePasswordResponseDTO changePassword(String keycloakUserId, String currentPassword, String newPassword
+    ) {
+        if (currentPassword.equals(newPassword)) {
+            throw new NewAndOldPasswordSameException(
+                    "New password must be different from current password"
+            );
+        }
+
+        iamService.changePassword(
+                keycloakUserId,
+                currentPassword,
+                newPassword
+        );
+        return ChangePasswordResponseDTO.builder()
+                .success(true)
+                .message("Password changed successfully")
+                .build();
+    }
+
 }

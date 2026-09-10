@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +17,7 @@ public class PatientDTO {
     @NotBlank(message = "Name is required")
     private String fullName;
 
-    @Min(value = 00)
+    @Min(value = 0)
     @Max(value = 60)
     private Integer age;
 

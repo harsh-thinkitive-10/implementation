@@ -17,3 +17,9 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/changeset/006-add-keycloak-user-id.yaml
+
+  - include:
+      file: db/changelog/changeset/007-add-uuid.yaml
+
+  - include:
+      file: db/changelog/changeset/008-added-new-columns-in-appointment-table.yaml

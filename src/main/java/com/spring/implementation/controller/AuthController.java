@@ -1,8 +1,6 @@
 package com.spring.implementation.controller;
 
-import com.spring.implementation.dto.LoginDTO;
-import com.spring.implementation.dto.LoginResponseDTO;
-import com.spring.implementation.dto.SetPasswordDTO;
+import com.spring.implementation.dto.*;
 import com.spring.implementation.service.AuthService;
 import com.spring.implementation.service.IamService;
 import jakarta.validation.Valid;
@@ -35,6 +33,24 @@ public class AuthController {
         );
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<ChangePasswordResponseDTO> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+
+        String keycloakUserId = jwt.getSubject();
+
+        ChangePasswordResponseDTO response =
+                authService.changePassword(
+                        keycloakUserId,
+                        request.currentPassword(),
+                        request.newPassword()
+                );
+
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -11,6 +11,8 @@ import com.spring.implementation.service.DoctorService;
 import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class AppointmentServiceImpl implements AppointmentService{
 
 
     @Override
-    public List<AppointmentView> findAllAppointment() {
-        return appointmentRepository.findAllAppointment();
+    public Page<AppointmentView> findAllAppointment(Pageable pageable) {
+        return appointmentRepository.findAllAppointment(pageable);
     }
 
     @Override
@@ -44,7 +46,6 @@ public class AppointmentServiceImpl implements AppointmentService{
     public void createNewAppointment(AppointmentRequestDTO appointmentRequestDTO) {
         AppointmentEntity appointment = AppointmentEntity.builder()
                 .appointmentDate(appointmentRequestDTO.getAppointmentDate())
-                .appointmentTime(appointmentRequestDTO.getAppointmentTime())
                 .reasonForVisit(appointmentRequestDTO.getReasonForVisit())
                 .status(appointmentRequestDTO.getStatus())
                 .patient(PatientEntity.toEntity(patientService.getPatientById(appointmentRequestDTO.getPatientId())))
@@ -54,5 +55,10 @@ public class AppointmentServiceImpl implements AppointmentService{
         appointmentRepository.save(appointment);
 
         }
+
+    @Override
+    public List<AppointmentView> findAppointmentsForPatient() {
+        return List.of();
+    }
 
 }

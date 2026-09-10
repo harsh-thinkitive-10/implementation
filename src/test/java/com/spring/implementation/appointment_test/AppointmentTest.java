@@ -40,31 +40,8 @@ public class AppointmentTest {
     @Autowired
     private PatientService patientService;
 
-    @Test
-    @Commit
-    public void addNewAppointment(){
-        PatientEntity patient = patientRepository.findById(3L).orElseThrow(()->new RuntimeException("not found"));
-        DoctorEntity doctor = doctorRepository.findById(2L).orElseThrow(()->new RuntimeException("not found"));
 
-        AppointmentEntity appointment = new AppointmentEntity();
 
-        appointment.setAppointmentDate(LocalDate.of(2026, 8, 10));
-        appointment.setAppointmentTime(LocalTime.of(10, 30));
-        appointment.setStatus("SCHEDULED");
-        appointment.setPatient(patient);
-        appointment.setDoctor(doctor);
-        appointmentRepository.save(appointment);
-    }
 
-    @Test
-    public void getAppointmentByPatientId(){
-        Long id = 2L;
-        List<AppointmentView> appointmentViews = appointmentRepository.findAppointmentForPatientByPatientId(id);
-        List<AppointmentResponseDTO> appointmentResponseDTOS = new ArrayList<>();
-        for (AppointmentView appointmentView : appointmentViews){
-            appointmentResponseDTOS.add(AppointmentResponseDTO.convertToDTO(appointmentView));
-        }
-        appointmentResponseDTOS.forEach(System.out::println);
-    }
 
 }

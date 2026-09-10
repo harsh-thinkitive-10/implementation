@@ -4,6 +4,10 @@ package com.spring.implementation.entity;
 import com.spring.implementation.dto.PatientDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+
+import java.sql.Types;
+import java.util.UUID;
 
 @Table(name = "patient")
 @Entity
@@ -23,6 +27,15 @@ public class PatientEntity {
     private String email;
     @Column(name = "keycloak_user_id", unique = true, nullable = false)
     private String keycloakUserId;
+
+    @JdbcTypeCode(Types.CHAR)
+    @Column(name = "uuid", nullable = false, unique = true, length = 36)
+    private UUID uuid;
+
+    @PrePersist
+    public void prePersist() {
+        this.uuid = UUID.randomUUID();
+    }
 
 
     public static PatientDTO toDTO(PatientEntity patient){

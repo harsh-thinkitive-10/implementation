@@ -15,4 +15,6 @@ public interface IamService {
 
     void setPassword(String keycloakUserId, String newPassword);
 
+    void changePassword(String keycloakUserId, String currentPassword, String newPassword);
+
 }

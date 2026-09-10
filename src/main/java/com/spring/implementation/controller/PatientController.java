@@ -1,6 +1,7 @@
 package com.spring.implementation.controller;
 
 import com.spring.implementation.dto.PatientDTO;
+import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
 import com.spring.implementation.service.PatientService;
 import jakarta.validation.Valid;
@@ -26,10 +27,21 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<PatientDTO> getMyProfile(@AuthenticationPrincipal Jwt jwt) {
         String keyCloakUserId = jwt.getSubject();
         return ResponseEntity.ok(patientService.GetKeyCloakId(keyCloakUserId));
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<PatientDashboardDTO> getDashboard(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+
+        return ResponseEntity.ok(
+                patientService.getMyDashboard(
+                        jwt.getSubject()
+                )
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -49,9 +61,9 @@ public class PatientController {
         return ResponseEntity.ok(patientService.registerNewPatient(patientRequest));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<PatientDTO> patch(@RequestBody @Validated PatientDTO patientDTO, @PathVariable Long id) {
-        return ResponseEntity.ok(patientService.updatePatientName(id,patientDTO));
+    @PatchMapping("/me")
+    public ResponseEntity<PatientDTO> updatePatient(@RequestBody @Validated PatientDTO patientDTO, @AuthenticationPrincipal Jwt jwt ){
+        return ResponseEntity.ok(patientService.updatePatient(jwt.getSubject(), patientDTO));
     }
 
     @PutMapping("/{id}")

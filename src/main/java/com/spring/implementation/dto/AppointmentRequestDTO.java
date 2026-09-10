@@ -1,5 +1,6 @@
 package com.spring.implementation.dto;
 
+import com.spring.implementation.dto.enums.AppointmentStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,11 +18,10 @@ import java.time.LocalTime;
 public class AppointmentRequestDTO {
 
     @Future
-    private LocalDate appointmentDate;
-    @Future
-    private LocalTime appointmentTime;
+    private Instant appointmentDate;
+    @NotBlank
     private String reasonForVisit;
-    private String status;
+    private AppointmentStatus status;
 
     @NotBlank
     private Long patientId;

@@ -1,18 +1,19 @@
 package com.spring.implementation.dto.projection;
 
+import com.spring.implementation.dto.enums.AppointmentStatus;
+
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public interface AppointmentView {
 
-    LocalDate getAppointmentDate();
-
-    LocalTime getAppointmentTime();
+    Instant getAppointmentDate();
 
     String getReasonForVisit();
 
-    String getStatus();
+    AppointmentStatus getStatus();
 
     // Patient
 
