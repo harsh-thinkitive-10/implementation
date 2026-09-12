@@ -2,7 +2,7 @@ package com.spring.implementation.controller;
 
 import com.spring.implementation.dto.*;
 import com.spring.implementation.service.AuthService;
-import com.spring.implementation.service.IamService;
+import com.spring.implementation.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final IamService iamService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO request) {
@@ -51,6 +51,41 @@ public class AuthController {
                 );
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request
+    ) {
+
+        passwordResetService.requestPasswordReset(
+                request.username()
+        );
+
+        return ResponseEntity.ok(
+                new ForgotPasswordResponse(
+                        true,
+                        "If an account exists, a password reset link has been sent."
+                )
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResetPasswordResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
+    ) {
+
+        passwordResetService.resetPassword(
+                request.token(),
+                request.newPassword()
+        );
+
+        return ResponseEntity.ok(
+                new ResetPasswordResponse(
+                        true,
+                        "Password reset successfully."
+                )
+        );
     }
 
 }

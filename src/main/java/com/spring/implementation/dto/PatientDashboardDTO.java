@@ -121,9 +121,7 @@ public class PatientDashboardDTO {
                                 .date(
                                         projection.getNextAppointmentDate()
                                 )
-                                .time(
-                                        projection.getNextAppointmentTime()
-                                )
+
                                 .doctorName(
                                         projection.getDoctorName()
                                 )

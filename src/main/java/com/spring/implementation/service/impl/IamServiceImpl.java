@@ -1,9 +1,6 @@
 package com.spring.implementation.service.impl;
 
-import com.spring.implementation.dto.KeycloakProperties;
-import com.spring.implementation.dto.LoginDTO;
-import com.spring.implementation.dto.LoginResponseDTO;
-import com.spring.implementation.dto.RegisterRequest;
+import com.spring.implementation.dto.*;
 import com.spring.implementation.exception.UserNameAlreadyExitsException;
 import com.spring.implementation.service.IamService;
 import jakarta.ws.rs.BadRequestException;
@@ -333,6 +330,55 @@ public class IamServiceImpl implements IamService {
                     "Current password is incorrect"
             );
         }
+    }
+
+    @Override
+    public KeycloakUser findUserByUsername(String username) {
+
+        List<UserRepresentation> users =
+                keycloak
+                        .realm(keycloakProperties.getRealm())
+                        .users()
+                        .searchByUsername(
+                                username,
+                                true
+                        );
+
+        if (users.isEmpty()) {
+            return null;
+        }
+
+        UserRepresentation user = users.get(0);
+
+        return new KeycloakUser(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
+    }
+
+    @Override
+    public void resetPassword(
+            String keycloakUserId,
+            String newPassword
+    ) {
+
+        CredentialRepresentation credential =
+                new CredentialRepresentation();
+
+        credential.setType(
+                CredentialRepresentation.PASSWORD
+        );
+
+        credential.setValue(newPassword);
+
+        credential.setTemporary(false);
+
+        keycloak
+                .realm(keycloakProperties.getRealm())
+                .users()
+                .get(keycloakUserId)
+                .resetPassword(credential);
     }
 
 

@@ -31,13 +31,17 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(
                         auth -> auth
-
+                                .requestMatchers(
+                                        "/api/v1/auth/forgot-password",
+                                        "/api/v1/auth/reset-password"
+                                ).permitAll()
                                 .requestMatchers(
                                         "/api/v1/auth/change-password"
                                 ).authenticated()
 
                                 .requestMatchers(
-                                        "/api/v1/auth/**"
+                                        "/api/v1/auth/**",
+                                        "/api/v1/test/email"
                                 ).permitAll()
 
                                 .requestMatchers(

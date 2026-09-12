@@ -25,7 +25,7 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity,L
                     p.gender AS patientGender,
                     p.phone_number AS patientPhoneNumber,
                     p.email AS patientEmail,
-                    
+    
                     d.full_name AS doctorFullName,
                     d.specialization AS doctorSpecialization,
                     d.phone_number AS doctorPhoneNumber,
@@ -39,10 +39,16 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity,L
     Page<AppointmentView> findAllAppointment(Pageable pageable);
 
     @Query(value = """
+                    SELECT 
+     """,
+         nativeQuery = true
+    )
+    Page<AppointmentView> findPatientAppointment(Pageable pageable);
+
+    @Query(value = """
                     SELECT
                     
                     a.appointment_date AS appointmentDate,
-                    a.appointment_time AS appointmentTime,
                     a.reason_for_visit AS reasonForVisit,
                     a.status AS status,
 

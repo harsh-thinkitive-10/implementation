@@ -5,12 +5,9 @@ import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.Response;
 import com.spring.implementation.dto.projection.AppointmentView;
 import com.spring.implementation.service.AppointmentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +27,6 @@ public class AppointmentController extends AppController{
     public ResponseEntity<Response> getAllAppointments(@ParameterObject Pageable pageable) {
         return data(HttpStatus.OK, "Appointment list fetched successfully", appointmentService.findAllAppointment(pageable));
     }
-
 
     //@PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/patient/{id}")
@@ -56,10 +52,13 @@ public class AppointmentController extends AppController{
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<Void> deleteAppointment(String id) {
 
-            return ResponseEntity.noContent().build();
-    }
+//   @GetMapping("/patient")
+//   @PreAuthorize("hasRole('PATIENT')")
+//   public ResponseEntity<Response> getMyAppointments(
+//           @ParameterObject Pageable pageable
+//   ) {
+//        return data(HttpStatus.OK,"Appointment list fetched successfully",appointmentService.);
+//   }
 
 }

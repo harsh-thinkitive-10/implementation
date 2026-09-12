@@ -15,8 +15,6 @@ public interface PatientDashboardProjection {
 
     String getNextAppointmentDate();
 
-    String getNextAppointmentTime();
-
     String getDoctorName();
 
     String getSpecialization();

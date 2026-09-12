@@ -4,6 +4,7 @@ import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
 import com.spring.implementation.service.PatientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
+@Tag(name = "User Management", description = "APIs for managing application users") // Groups endpoints
 public class PatientController {
 
 
