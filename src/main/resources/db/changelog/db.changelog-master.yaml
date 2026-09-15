@@ -22,7 +22,15 @@ databaseChangeLog:
       file: db/changelog/changeset/007-add-uuid.yaml
 
   - include:
-      file: db/changelog/changeset/008-added-new-columns-in-appointment-table.yaml
+      file: db/changelog/changeset/009-create-password-reset-token.yaml
 
   - include:
-      file: db/changelog/changeset/009-create-password-reset-token.yaml
+      file: db/changelog/changeset/010-harden-appointment.yaml
+
+  - include:
+      file: db/changelog/changeset/011-add-appointment-uuid.yaml
+
+  - include:
+      file: db/changelog/changeset/012-add-doctor-uuid.yaml
+  - include:
+      file: db/changelog/changeset/013-add-prescription-uuid.yaml

@@ -1,9 +1,6 @@
 package com.spring.implementation.service;
 
-import com.spring.implementation.dto.KeycloakUser;
-import com.spring.implementation.dto.LoginDTO;
-import com.spring.implementation.dto.LoginResponseDTO;
-import com.spring.implementation.dto.RegisterRequest;
+import com.spring.implementation.dto.*;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -22,6 +19,10 @@ public interface IamService {
             String newPassword
     );
     KeycloakUser findUserByUsername(String username);
+
+    TokenResponse refreshToken(String refreshToken);
+
+    void logout(String refreshToken);
 
 
 }

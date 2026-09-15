@@ -1,0 +1,34 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 011-add-appointment-uuid
+      author: harsh
+
+      changes:
+
+        - addColumn:
+            tableName: appointment
+            columns:
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+
+        - sql:
+            sql: UPDATE appointment SET uuid = UUID() WHERE uuid IS NULL
+
+        - addNotNullConstraint:
+            tableName: appointment
+            columnName: uuid
+            columnDataType: CHAR(36)
+
+        - addUniqueConstraint:
+            tableName: appointment
+            columnNames: uuid
+            constraintName: uk_appointment_uuid
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_uuid
+            columns:
+              - column:
+                  name: uuid

@@ -33,33 +33,29 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers(
                                         "/api/v1/auth/forgot-password",
-                                        "/api/v1/auth/reset-password"
+                                        "/api/v1/auth/reset-password",
+                                        "/api/v1/auth/refresh",
+                                        "/api/v1/auth/logout"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/api/v1/auth/change-password"
                                 ).authenticated()
-
                                 .requestMatchers(
-                                        "/api/v1/auth/**",
-                                        "/api/v1/test/email"
+                                        "/api/v1/auth/**"
                                 ).permitAll()
-
                                 .requestMatchers(
                                         "/api/v1/public/**"
                                 ).permitAll()
-
                                 .requestMatchers(
-                                        "/api/v1/admin/**"
+                                        "/api/v1/admin/**",
+                                        "/api/v1/appointment"
                                 ).hasRole("ADMIN")
-
                                 .requestMatchers(
                                         "/api/v1/patient/**"
                                 ).hasAnyRole("PATIENT", "ADMIN")
-
                                 .requestMatchers(
                                         "/api/v1/doctor/**"
                                 ).hasAnyRole("DOCTOR", "ADMIN")
-
                                 .anyRequest()
                                 .authenticated()
                 )

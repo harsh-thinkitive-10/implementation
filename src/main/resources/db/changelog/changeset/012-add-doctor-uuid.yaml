@@ -1,0 +1,34 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 012-add-doctor-uuid
+      author: harsh
+
+      changes:
+
+        - addColumn:
+            tableName: doctor
+            columns:
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+
+        - sql:
+            sql: UPDATE doctor SET uuid = UUID() WHERE uuid IS NULL
+
+        - addNotNullConstraint:
+            tableName: doctor
+            columnName: uuid
+            columnDataType: CHAR(36)
+
+        - addUniqueConstraint:
+            tableName: doctor
+            columnNames: uuid
+            constraintName: uk_doctor_uuid
+
+        - createIndex:
+            tableName: doctor
+            indexName: idx_doctor_uuid
+            columns:
+              - column:
+                  name: uuid

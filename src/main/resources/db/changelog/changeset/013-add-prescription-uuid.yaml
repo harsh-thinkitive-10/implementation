@@ -1,0 +1,27 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 005-add-prescription-uuid
+      author: harsh
+
+      changes:
+
+        - addColumn:
+            tableName: prescription
+            columns:
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+
+        - sql:
+            sql: UPDATE prescription SET uuid = UUID() WHERE uuid IS NULL
+
+        - addNotNullConstraint:
+            tableName: prescription
+            columnName: uuid
+            columnDataType: CHAR(36)
+
+        - addUniqueConstraint:
+            tableName: prescription
+            columnNames: uuid
+            constraintName: uk_prescription_uuid

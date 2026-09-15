@@ -171,16 +171,13 @@ public class IamServiceImpl implements IamService {
                 .body(
                         BodyInserters.fromFormData(
                                         "grant_type", "password"
-                                )
-                                .with(
+                                ).with(
                                         "client_id",
                                         keycloakProperties.getLoginClientId()
-                                )
-                                .with(
+                                ).with(
                                         "username",
                                         request.getUsername()
-                                )
-                                .with(
+                                ).with(
                                         "password",
                                         request.getPassword()
                                 )
@@ -358,6 +355,108 @@ public class IamServiceImpl implements IamService {
     }
 
     @Override
+    public TokenResponse refreshToken(String refreshToken) {
+
+        String tokenUrl =
+                keycloakProperties.getServerUrl()
+                        + "/realms/"
+                        + keycloakProperties.getRealm()
+                        + "/protocol/openid-connect/token";
+
+        log.info("Refreshing Keycloak access token");
+
+        return webClientBuilder
+                .build()
+                .post()
+                .uri(tokenUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(
+                        BodyInserters.fromFormData(
+                                        "grant_type",
+                                        "refresh_token"
+                                )
+                                .with(
+                                        "client_id",
+                                        keycloakProperties.getLoginClientId()
+                                )
+                                .with(
+                                        "refresh_token",
+                                        refreshToken
+                                )
+                )
+                .retrieve()
+                .onStatus(
+                        status -> status.isError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+
+                                    log.error(
+                                            "Keycloak token refresh failed. Status={}, Body={}",
+                                            response.statusCode(),
+                                            errorBody
+                                    );
+
+                                    return reactor.core.publisher.Mono.error(
+                                            new RuntimeException(
+                                                    "Token refresh failed"
+                                            )
+                                    );
+                                })
+                )
+                .bodyToMono(TokenResponse.class)
+                .block();
+    }
+
+    @Override
+    public void logout(String refreshToken) {
+
+        String logoutUrl =
+                keycloakProperties.getServerUrl()
+                        + "/realms/"
+                        + keycloakProperties.getRealm()
+                        + "/protocol/openid-connect/logout";
+
+        log.info("Logging out from Keycloak");
+
+        webClientBuilder
+                .build()
+                .post()
+                .uri(logoutUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(
+                        BodyInserters.fromFormData(
+                                        "client_id",
+                                        keycloakProperties.getLoginClientId()
+                                )
+                                .with(
+                                        "refresh_token",
+                                        refreshToken
+                                )
+                )
+                .retrieve()
+                .onStatus(
+                        status -> status.isError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+
+                                    log.error(
+                                            "Keycloak logout failed. Status={}, Body={}",
+                                            response.statusCode(),
+                                            errorBody
+                                    );
+
+                                    return reactor.core.publisher.Mono.error(
+                                            new RuntimeException(
+                                                    "Logout failed"
+                                            )
+                                    );
+                                })
+                )
+                .toBodilessEntity()
+                .block();
+    }
+
+    @Override
     public void resetPassword(
             String keycloakUserId,
             String newPassword
@@ -380,6 +479,8 @@ public class IamServiceImpl implements IamService {
                 .get(keycloakUserId)
                 .resetPassword(credential);
     }
+
+
 
 
 }

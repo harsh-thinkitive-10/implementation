@@ -1,9 +1,6 @@
 package com.spring.implementation.service.impl;
 
-import com.spring.implementation.dto.ChangePasswordResponseDTO;
-import com.spring.implementation.dto.LoginDTO;
-import com.spring.implementation.dto.LoginResponseDTO;
-import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.dto.*;
 import com.spring.implementation.exception.NewAndOldPasswordSameException;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.AuthService;
@@ -72,6 +69,16 @@ public class AuthServiceImpl implements AuthService {
                 .success(true)
                 .message("Password changed successfully")
                 .build();
+    }
+
+    @Override
+    public void logout(String refreshToken) {
+        iamService.logout(refreshToken);
+    }
+
+    @Override
+    public TokenResponse refreshToken(String refreshToken) {
+        return iamService.refreshToken(refreshToken);
     }
 
 }

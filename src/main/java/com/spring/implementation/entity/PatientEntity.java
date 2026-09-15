@@ -1,6 +1,5 @@
 package com.spring.implementation.entity;
 
-
 import com.spring.implementation.dto.PatientDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,36 +8,50 @@ import org.hibernate.annotations.JdbcTypeCode;
 import java.sql.Types;
 import java.util.UUID;
 
-@Table(name = "patient")
 @Entity
-@Data
+@Table(name = "patient")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PatientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long patientId;
+
+    @Column(name = "full_name", nullable = false)
     private String fullName;
+
     private Integer age;
+
     private String gender;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
+
     private String email;
-    @Column(name = "keycloak_user_id", unique = true, nullable = false)
+
+    @Column(name = "keycloak_user_id", nullable = false)
     private String keycloakUserId;
 
     @JdbcTypeCode(Types.CHAR)
-    @Column(name = "uuid", nullable = false, unique = true, length = 36)
+    @Column(
+            name = "uuid",
+            nullable = false,
+            length = 36
+    )
     private UUID uuid;
 
     @PrePersist
     public void prePersist() {
-        this.uuid = UUID.randomUUID();
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
     }
 
-
-    public static PatientDTO toDTO(PatientEntity patient){
+    public static PatientDTO toDTO(PatientEntity patient) {
         return PatientDTO.builder()
                 .fullName(patient.getFullName())
                 .age(patient.getAge())
@@ -46,10 +59,9 @@ public class PatientEntity {
                 .phoneNumber(patient.getPhoneNumber())
                 .email(patient.getEmail())
                 .build();
-
     }
 
-    public static PatientEntity toEntity(PatientDTO patientDTO){
+    public static PatientEntity toEntity(PatientDTO patientDTO) {
         return PatientEntity.builder()
                 .fullName(patientDTO.getFullName())
                 .age(patientDTO.getAge())
@@ -58,5 +70,4 @@ public class PatientEntity {
                 .email(patientDTO.getEmail())
                 .build();
     }
-
 }

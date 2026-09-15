@@ -1,7 +1,6 @@
 package com.spring.implementation.controller;
 
 import com.spring.implementation.dto.Response;
-import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-@Tag(name = "User Management", description = "APIs for managing application users") // Groups endpoints
 public class PatientController {
 
 

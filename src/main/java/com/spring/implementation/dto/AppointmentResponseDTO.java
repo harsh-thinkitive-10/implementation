@@ -1,22 +1,25 @@
 package com.spring.implementation.dto;
-import com.spring.implementation.dto.projection.AppointmentView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.Instant;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentResponseDTO {
 
-    private LocalDate appointmentDate;
-    private LocalTime appointmentTime;
-    private String reasonForVisit;
-    private String status;
-    private PatientDTO patient;
-    private DoctorDTO doctor;
+    private UUID uuid;
 
+    private Instant appointmentDate;
+
+    private String reasonForVisit;
+
+    private String status;
+
+    private PatientDTO patient;
+
+    private DoctorDTO doctor;
 }

@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -19,11 +17,12 @@ public class AppointmentRequestDTO {
 
     @Future
     private Instant appointmentDate;
+
     @NotBlank
     private String reasonForVisit;
     private AppointmentStatus status;
 
-    @NotBlank
+    @NotNull
     private Long patientId;
 
     @NotNull

@@ -2,22 +2,20 @@ package com.spring.implementation.service;
 
 
 import com.spring.implementation.dto.AppointmentRequestDTO;
-import com.spring.implementation.dto.projection.AppointmentView;
+import com.spring.implementation.dto.projection.AppointmentAdminView;
+import com.spring.implementation.dto.projection.AppointmentDoctorView;
+import com.spring.implementation.dto.projection.AppointmentPatientView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface AppointmentService {
 
-    Page<AppointmentView> findAllAppointment(Pageable pageable);
+    Page<AppointmentAdminView> findAllAppointment(Pageable pageable);
 
-    List<AppointmentView> findAppointmentForPatientByPatientId(Long id);
+    Page<AppointmentPatientView> findAppointmentsForPatient(Pageable pageable);
 
-    List<AppointmentView> findAppointmentForDoctorByDoctorId(Long id);
+    Page<AppointmentDoctorView> findAppointmentsForDoctor(Pageable pageable);
 
     void createNewAppointment(AppointmentRequestDTO appointmentRequestDTO);
-
-    List<AppointmentView> findAppointmentsForPatient();
 
 }

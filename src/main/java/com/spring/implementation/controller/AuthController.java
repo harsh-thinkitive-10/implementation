@@ -88,4 +88,36 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponseDTO> refresh(
+            @Valid @RequestBody RefreshTokenRequestDTO request) {
+
+        TokenResponse tokenResponse =
+                authService.refreshToken(request.refreshToken());
+
+        return ResponseEntity.ok(
+                new RefreshTokenResponseDTO(
+                        true,
+                        tokenResponse.accessToken(),
+                        tokenResponse.refreshToken(),
+                        tokenResponse.expiresIn(),
+                        tokenResponse.tokenType()
+                )
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponse> logout(
+            @Valid @RequestBody LogoutRequest request) {
+
+        authService.logout(request.refreshToken());
+
+        return ResponseEntity.ok(
+                new LogoutResponse(
+                        true,
+                        "Logged out successfully."
+                )
+        );
+    }
+
 }

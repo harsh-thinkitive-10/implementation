@@ -1,0 +1,45 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 010-harden-appointment
+      author: harsh
+
+      changes:
+
+        - addNotNullConstraint:
+            tableName: appointment
+            columnName: appointment_date
+            columnDataType: TIMESTAMP
+
+        - addNotNullConstraint:
+            tableName: appointment
+            columnName: status
+            columnDataType: VARCHAR(50)
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_patient
+            columns:
+              - column:
+                  name: patient_id
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_doctor
+            columns:
+              - column:
+                  name: doctor_id
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_date
+            columns:
+              - column:
+                  name: appointment_date
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_status
+            columns:
+              - column:
+                  name: status

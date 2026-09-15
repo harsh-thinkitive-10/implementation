@@ -4,10 +4,8 @@ import com.spring.implementation.dto.enums.AppointmentStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
-public interface AppointmentView {
+public interface AppointmentPatientView {
 
     Instant getAppointmentDate();
 
@@ -15,20 +13,7 @@ public interface AppointmentView {
 
     AppointmentStatus getStatus();
 
-    // Patient
-
-    String getPatientFullName();
-
-    Integer getPatientAge();
-
-    String getPatientGender();
-
-    String getPatientPhoneNumber();
-
-    String getPatientEmail();
-
     // Doctor
-
     String getDoctorFullName();
 
     String getDoctorSpecialization();

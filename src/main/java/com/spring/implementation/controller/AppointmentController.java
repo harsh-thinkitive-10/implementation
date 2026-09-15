@@ -1,25 +1,21 @@
 package com.spring.implementation.controller;
 
 import com.spring.implementation.dto.AppointmentRequestDTO;
-import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.Response;
-import com.spring.implementation.dto.projection.AppointmentView;
 import com.spring.implementation.service.AppointmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springdoc.core.annotations.ParameterObject;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/appointment")
 @RequiredArgsConstructor
-public class AppointmentController extends AppController{
+public class AppointmentController extends AppController {
 
     private final AppointmentService appointmentService;
 
@@ -28,37 +24,19 @@ public class AppointmentController extends AppController{
         return data(HttpStatus.OK, "Appointment list fetched successfully", appointmentService.findAllAppointment(pageable));
     }
 
-    //@PreAuthorize("hasRole('PATIENT')")
-    @GetMapping("/patient/{id}")
-    public ResponseEntity<List<AppointmentView>> getAllAppointmentsByPatientId(@PathVariable Long id) {
-        List<AppointmentView> appointmentView = appointmentService.findAppointmentForPatientByPatientId(id);
-        return ResponseEntity.ok(appointmentView);
+    @GetMapping("/doctor")
+    public ResponseEntity<Response> getDoctorAppointments(@ParameterObject Pageable pageable) {
+        return data(HttpStatus.OK, "Doctor appointment list fetched successfully", appointmentService.findAppointmentsForDoctor(pageable));
     }
 
-    @PreAuthorize("hasRole('DOCTOR')")
-    @GetMapping("/doctor/{id}")
-    public ResponseEntity<List<AppointmentView>> getAllAppointmentsByDoctorId(@PathVariable Long id) {
-        return ResponseEntity.of(Optional.ofNullable(appointmentService.findAppointmentForDoctorByDoctorId(id)));
+    @GetMapping("/patient")
+    public ResponseEntity<Response> getPatientAppointments(@ParameterObject Pageable pageable) {
+        return data(HttpStatus.OK, "Patient appointment list fetched successfully", appointmentService.findAppointmentsForPatient(pageable));
     }
 
-    @PostMapping()
-    public ResponseEntity<Void> createNewAppointment(@RequestBody AppointmentRequestDTO appointmentRequestDTO) {
+    @PostMapping
+    public ResponseEntity<Void> createNewAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO) {
         appointmentService.createNewAppointment(appointmentRequestDTO);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping("")
-    public ResponseEntity<AppointmentResponseDTO> updateAppointment(@RequestBody String value) {
-        return ResponseEntity.noContent().build();
-    }
-
-
-//   @GetMapping("/patient")
-//   @PreAuthorize("hasRole('PATIENT')")
-//   public ResponseEntity<Response> getMyAppointments(
-//           @ParameterObject Pageable pageable
-//   ) {
-//        return data(HttpStatus.OK,"Appointment list fetched successfully",appointmentService.);
-//   }
-
 }
