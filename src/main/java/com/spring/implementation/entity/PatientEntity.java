@@ -52,7 +52,9 @@ public class PatientEntity {
     }
 
     public static PatientDTO toDTO(PatientEntity patient) {
+
         return PatientDTO.builder()
+                .uuid(patient.getUuid())
                 .fullName(patient.getFullName())
                 .age(patient.getAge())
                 .gender(patient.getGender())

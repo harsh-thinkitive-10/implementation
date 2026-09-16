@@ -3,6 +3,8 @@ package com.spring.implementation.controller;
 import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.dto.Response;
+import com.spring.implementation.dto.enums.ResponseCode;
 import com.spring.implementation.service.PatientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class PatientController {
+public class PatientController extends AppController{
 
 
     private final PatientService patientService;
@@ -45,10 +47,15 @@ public class PatientController {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/patients")
-    public ResponseEntity<List<PatientDTO>> get() {
-        return ResponseEntity.ok(patientService.getAllPatient());
+    public ResponseEntity<Response> get() {
+
+        return data(
+                ResponseCode.OK,
+                "Patient list fetched successfully",
+                patientService.getAllPatient()
+        );
     }
 
     @GetMapping("/{id}")

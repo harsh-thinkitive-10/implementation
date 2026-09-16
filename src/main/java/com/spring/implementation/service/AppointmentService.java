@@ -2,6 +2,7 @@ package com.spring.implementation.service;
 
 
 import com.spring.implementation.dto.AppointmentRequestDTO;
+import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.projection.AppointmentAdminView;
 import com.spring.implementation.dto.projection.AppointmentDoctorView;
 import com.spring.implementation.dto.projection.AppointmentPatientView;
@@ -16,6 +17,8 @@ public interface AppointmentService {
 
     Page<AppointmentDoctorView> findAppointmentsForDoctor(Pageable pageable);
 
-    void createNewAppointment(AppointmentRequestDTO appointmentRequestDTO);
+    AppointmentResponseDTO createNewAppointment(
+            AppointmentRequestDTO appointmentRequestDTO
+    );
 
 }

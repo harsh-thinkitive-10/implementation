@@ -14,21 +14,6 @@ public class KeycloakConfig {
 
     @Bean
     public Keycloak keycloak(KeycloakProperties properties) {
-
-        System.out.println("Server URL = " + properties.getServerUrl());
-        System.out.println("Realm = " + properties.getRealm());
-        System.out.println("Client ID = " + properties.getAdminClientId());
-
-        System.out.println(
-                "Secret present = "
-                        + (properties.getAdminClientSecret() != null)
-        );
-
-        System.out.println(
-                "Secret length = "
-                        + properties.getAdminClientSecret().length()
-        );
-
         return KeycloakBuilder.builder()
                 .serverUrl(properties.getServerUrl())
                 .realm(properties.getRealm())

@@ -1,6 +1,7 @@
 package com.spring.implementation.service;
 
 import com.spring.implementation.dto.*;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -23,6 +24,13 @@ public interface IamService {
     TokenResponse refreshToken(String refreshToken);
 
     void logout(String refreshToken);
+
+    void updateUser(
+            String keycloakUserId,
+            String fullName,
+            String email
+    );
+
 
 
 }

@@ -58,6 +58,7 @@ public class DoctorEntity {
 
     public static DoctorDTO toDto(DoctorEntity doctor) {
         return DoctorDTO.builder()
+                .uuid(doctor.getUuid())
                 .fullName(doctor.getFullName())
                 .specialization(doctor.getSpecialization())
                 .phoneNumber(doctor.getPhoneNumber())

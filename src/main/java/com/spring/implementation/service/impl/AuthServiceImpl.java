@@ -17,9 +17,6 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 public class AuthServiceImpl implements AuthService {
 
     private final IamService iamService;
-    private final PatientRepository patientRepository;
-
-
     @Override
     public String registerPatient(RegisterPatient registerPatient) {
         try {
@@ -35,21 +32,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void setPassword(Long patientId, String newPassword) {
+    public void setPassword(String token, String newPassword) {
 
-        String keycloakUserId =
-                patientRepository.findKeycloakUserIdByPatientId(patientId);
-
-        if (keycloakUserId == null) {
-            throw new RuntimeException(
-                    "Keycloak user not found for patient ID: " + patientId
-            );
-        }
-
-        iamService.setPassword(
-                keycloakUserId,
-                newPassword
-        );
+//        String keycloakUserId =
+//                iamService.validateSetPasswordToken(token);
+//
+//        iamService.setPassword(
+//                keycloakUserId,
+//                newPassword
+//        );
     }
     @Override
     public ChangePasswordResponseDTO changePassword(String keycloakUserId, String currentPassword, String newPassword

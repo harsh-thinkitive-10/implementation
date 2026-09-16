@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-admin
+      author: harsh
+
+      changes:
+
+        - createTable:
+            tableName: admin
+            columns:
+
+              - column:
+                  name: admin_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: keycloak_user_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: admin
+            columnNames: uuid
+            constraintName: uk_admin_uuid
+
+        - addUniqueConstraint:
+            tableName: admin
+            columnNames: keycloak_user_id
+            constraintName: uk_admin_keycloak_user_id

@@ -9,22 +9,16 @@ import lombok.*;
 import java.util.UUID;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PatientDTO {
 
-    @NotBlank(message = "Name is required")
+    private UUID uuid;
+
     private String fullName;
-
-    @Min(value = 0)
-    @Max(value = 60)
     private Integer age;
-
     private String gender;
-
     private String phoneNumber;
-
-    @Email(message = "invalid mail")
     private String email;
 }

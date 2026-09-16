@@ -389,18 +389,8 @@ public class IamServiceImpl implements IamService {
                         status -> status.isError(),
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> {
-
-                                    log.error(
-                                            "Keycloak token refresh failed. Status={}, Body={}",
-                                            response.statusCode(),
-                                            errorBody
-                                    );
-
-                                    return reactor.core.publisher.Mono.error(
-                                            new RuntimeException(
-                                                    "Token refresh failed"
-                                            )
-                                    );
+                                    log.error("Keycloak token refresh failed. Status={}, Body={}", response.statusCode(), errorBody);
+                                    return reactor.core.publisher.Mono.error(new RuntimeException("Token refresh failed"));
                                 })
                 )
                 .bodyToMono(TokenResponse.class)
@@ -481,7 +471,46 @@ public class IamServiceImpl implements IamService {
     }
 
 
+    @Override
+    public void updateUser(
+            String keycloakUserId,
+            String fullName,
+            String email
+    ) {
 
+        UserRepresentation keycloakUser =
+                keycloak
+                        .realm(keycloakProperties.getRealm())
+                        .users()
+                        .get(keycloakUserId)
+                        .toRepresentation();
+
+        String[] nameParts =
+                fullName
+                        .trim()
+                        .split("\\s+", 2);
+
+        keycloakUser.setFirstName(nameParts[0]);
+
+        keycloakUser.setLastName(
+                nameParts.length > 1
+                        ? nameParts[1]
+                        : ""
+        );
+
+        keycloakUser.setEmail(email);
+
+        keycloak
+                .realm(keycloakProperties.getRealm())
+                .users()
+                .get(keycloakUserId)
+                .update(keycloakUser);
+
+        log.info(
+                "Keycloak user updated successfully. userId={}",
+                keycloakUserId
+        );
+    }
 
 }
 

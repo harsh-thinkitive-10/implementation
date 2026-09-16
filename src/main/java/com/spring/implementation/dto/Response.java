@@ -1,5 +1,6 @@
 package com.spring.implementation.dto;
 
+import com.spring.implementation.dto.enums.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class Response {
 
-    private HttpStatus code;
+    private ResponseCode code;
 
     private Object data;
 

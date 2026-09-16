@@ -22,14 +22,15 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO request) {
         return ResponseEntity.ok(authService.login(request));
     }
-    @PostMapping("/set-password/{patientId}")
+
+    @PostMapping("/set-password")
     public ResponseEntity<Void> setPassword(
-            @PathVariable Long patientId,
-            @Valid @RequestBody SetPasswordDTO request) {
+            @Valid @RequestBody SetPasswordRequest request
+    ) {
 
         authService.setPassword(
-                patientId,
-                request.getNewPassword()
+                request.token(),
+                request.newPassword()
         );
 
         return ResponseEntity.noContent().build();

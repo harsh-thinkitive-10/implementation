@@ -1,5 +1,7 @@
 package com.spring.implementation.entity;
 
+import com.spring.implementation.dto.PrescriptionRequestDTO;
+import com.spring.implementation.dto.PrescriptionResponseDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import lombok.*;
@@ -50,4 +52,32 @@ public class PrescriptionEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "appointment_id", nullable = false)
     private AppointmentEntity appointment;
+
+    public static PrescriptionEntity toEntity(
+            PrescriptionRequestDTO dto,
+            AppointmentEntity appointment
+    ) {
+        return PrescriptionEntity.builder()
+                .medicineName(dto.getMedicineName())
+                .dosage(dto.getDosage())
+                .frequency(dto.getFrequency())
+                .duration(dto.getDuration())
+                .instructions(dto.getInstructions())
+                .appointment(appointment)
+                .build();
+    }
+
+    public static PrescriptionResponseDTO toDTO(
+            PrescriptionEntity prescription
+    ) {
+        return new PrescriptionResponseDTO(
+                prescription.getUuid(),
+                prescription.getMedicineName(),
+                prescription.getDosage(),
+                prescription.getFrequency(),
+                prescription.getDuration(),
+                prescription.getInstructions(),
+                prescription.getAppointment().getUuid()
+        );
+    }
 }

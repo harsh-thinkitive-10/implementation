@@ -4,12 +4,16 @@ import com.spring.implementation.dto.projection.AppointmentAdminView;
 import com.spring.implementation.dto.projection.AppointmentDoctorView;
 import com.spring.implementation.dto.projection.AppointmentPatientView;
 import com.spring.implementation.entity.AppointmentEntity;
+import com.spring.implementation.entity.PrescriptionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity,Long> {
@@ -126,5 +130,7 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity,L
             @Param("keycloakUserId") String keycloakUserId,
             Pageable pageable
     );
+
+    Optional<AppointmentEntity> findByUuid(UUID uuid);
 
 }

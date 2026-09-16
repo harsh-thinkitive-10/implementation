@@ -1,6 +1,10 @@
 package com.spring.implementation.service.impl;
 
 import com.spring.implementation.dto.AppointmentRequestDTO;
+import com.spring.implementation.dto.AppointmentResponseDTO;
+import com.spring.implementation.dto.DoctorDTO;
+import com.spring.implementation.dto.PatientDTO;
+import com.spring.implementation.dto.enums.AppointmentStatus;
 import com.spring.implementation.dto.projection.AppointmentAdminView;
 import com.spring.implementation.dto.projection.AppointmentDoctorView;
 import com.spring.implementation.dto.projection.AppointmentPatientView;
@@ -27,8 +31,6 @@ import org.springframework.stereotype.Service;
 public class AppointmentServiceImpl implements AppointmentService{
 
     private final AppointmentRepository appointmentRepository;
-    private final PatientService patientService;
-    private final DoctorService doctorService;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
 
@@ -51,26 +53,48 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public void createNewAppointment(AppointmentRequestDTO appointmentRequestDTO) {
-        PatientEntity patient = patientRepository.findById(appointmentRequestDTO.getPatientId())
+    public AppointmentResponseDTO createNewAppointment(
+            AppointmentRequestDTO appointmentRequestDTO
+    ) {
+
+        PatientEntity patient = patientRepository
+                .findByUuid(appointmentRequestDTO.getPatientUuid())
                 .orElseThrow(() ->
                         new RuntimeException("Patient not found")
                 );
 
         DoctorEntity doctor = doctorRepository
-                .findById(appointmentRequestDTO.getDoctorId())
+                .findByUuid(appointmentRequestDTO.getDoctorUuid())
                 .orElseThrow(() ->
                         new RuntimeException("Doctor not found")
                 );
-        AppointmentEntity appointment = AppointmentEntity.builder()
-                .appointmentDate(appointmentRequestDTO.getAppointmentDate())
-                .reasonForVisit(appointmentRequestDTO.getReasonForVisit())
-                .status(appointmentRequestDTO.getStatus())
-                .patient(patient)
-                .doctor(doctor)
-                .build();
 
-        appointmentRepository.save(appointment);
+        AppointmentEntity appointment =
+                AppointmentEntity.builder()
+                        .appointmentDate(
+                                appointmentRequestDTO.getAppointmentDate()
+                        )
+                        .reasonForVisit(
+                                appointmentRequestDTO.getReasonForVisit()
+                        )
+                        .status(
+                                appointmentRequestDTO.getStatus()
+                        )
+                        .patient(patient)
+                        .doctor(doctor)
+                        .build();
+
+        AppointmentEntity savedAppointment =
+                appointmentRepository.save(appointment);
+
+        return new AppointmentResponseDTO(
+                savedAppointment.getUuid(),
+                savedAppointment.getAppointmentDate(),
+                savedAppointment.getReasonForVisit(),
+                savedAppointment.getStatus().name(),
+                PatientEntity.toDTO(savedAppointment.getPatient()),
+                DoctorEntity.toDto(savedAppointment.getDoctor())
+        );
     }
     private String getAuthenticatedUserId() {
 

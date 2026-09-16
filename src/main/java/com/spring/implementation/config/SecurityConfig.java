@@ -35,8 +35,12 @@ public class SecurityConfig {
                                         "/api/v1/auth/forgot-password",
                                         "/api/v1/auth/reset-password",
                                         "/api/v1/auth/refresh",
-                                        "/api/v1/auth/logout"
+                                        "/api/v1/auth/logout",
+                                        "/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
                                 ).permitAll()
+                                .requestMatchers("/api/v1/appointment").authenticated()
                                 .requestMatchers(
                                         "/api/v1/auth/change-password"
                                 ).authenticated()
@@ -44,12 +48,14 @@ public class SecurityConfig {
                                         "/api/v1/auth/**"
                                 ).permitAll()
                                 .requestMatchers(
-                                        "/api/v1/public/**"
-                                ).permitAll()
+                                        "/api/v1/prescription/**"
+                                ).authenticated()
                                 .requestMatchers(
-                                        "/api/v1/admin/**",
-                                        "/api/v1/appointment"
+                                        "/api/v1/admin/**"
                                 ).hasRole("ADMIN")
+                                .requestMatchers(
+                                        "/api/v1/prescription"
+                                ).hasRole("DOCTOR")
                                 .requestMatchers(
                                         "/api/v1/patient/**"
                                 ).hasAnyRole("PATIENT", "ADMIN")

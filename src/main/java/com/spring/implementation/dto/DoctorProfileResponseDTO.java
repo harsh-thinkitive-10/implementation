@@ -1,8 +1,5 @@
 package com.spring.implementation.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorDTO {
+public class DoctorProfileResponseDTO {
 
     private UUID uuid;
     private String fullName;

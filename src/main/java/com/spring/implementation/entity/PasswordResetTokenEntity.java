@@ -1,5 +1,6 @@
 package com.spring.implementation.entity;
 
+import com.spring.implementation.dto.enums.PasswordTokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,13 @@ public class PasswordResetTokenEntity {
             nullable = false
     )
     private String keycloakUserId;
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "token_type",
+            nullable = false,
+            length = 30
+    )
+    private PasswordTokenType tokenType;
 
     @Column(
             name = "token_hash",
