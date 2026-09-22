@@ -21,11 +21,11 @@ public class PrescriptionController extends AppController {
     private final PrescriptionService prescriptionService;
 
     @PostMapping
-    public ResponseEntity<Response> createPrescription(
-            @Valid @RequestBody PrescriptionRequestDTO prescriptionRequestDTO) throws ImplException {
+    public ResponseEntity<Response> createPrescription(@Valid @RequestBody PrescriptionRequestDTO prescriptionRequestDTO) throws ImplException {
         PrescriptionResponseDTO response = prescriptionService.createPrescription(prescriptionRequestDTO);
         return data(ResponseCode.CREATED, "Prescription created successfully", response);
     }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<Response> getPrescriptionByUuid(@PathVariable UUID uuid) throws ImplException {
         PrescriptionResponseDTO response = prescriptionService.getPrescriptionByUuid(uuid);
@@ -33,9 +33,7 @@ public class PrescriptionController extends AppController {
     }
 
     @GetMapping("/appointment/{appointmentUuid}")
-    public ResponseEntity<Response> getPrescriptionByAppointmentUuid (
-            @PathVariable UUID appointmentUuid
-    ) throws ImplException {
+    public ResponseEntity<Response> getPrescriptionByAppointmentUuid(@PathVariable UUID appointmentUuid) throws ImplException {
 
         PrescriptionResponseDTO response = prescriptionService.getPrescriptionByAppointmentUuid(appointmentUuid);
 

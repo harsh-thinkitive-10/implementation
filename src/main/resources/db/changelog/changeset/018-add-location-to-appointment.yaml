@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018-add-location-to-appointment
+      author: harsh
+      changes:
+
+        - addColumn:
+            tableName: appointment
+            columns:
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+        - addForeignKeyConstraint:
+            baseTableName: appointment
+            baseColumnNames: location_id
+            referencedTableName: location
+            referencedColumnNames: id
+            constraintName: fk_appointment_location
+
+        - createIndex:
+            tableName: appointment
+            indexName: idx_appointment_location_id
+            columns:
+              - column:
+                  name: location_id

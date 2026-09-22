@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 
 import java.math.BigDecimal;
 import java.sql.Types;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -49,10 +50,17 @@ public class DoctorEntity {
     )
     private String keycloakUserId;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @PrePersist
     public void prePersist() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
+        }
+
+        if (isActive == null) {
+            isActive = true;
         }
     }
 
@@ -64,6 +72,7 @@ public class DoctorEntity {
                 .phoneNumber(doctor.getPhoneNumber())
                 .email(doctor.getEmail())
                 .consultationFee(doctor.getConsultationFee())
+                .isActive(Objects.nonNull(doctor.isActive) ? doctor.isActive : false)
                 .build();
     }
 

@@ -1,24 +1,30 @@
 package com.spring.implementation.service;
 
 import com.spring.implementation.dto.*;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.http.ResponseEntity;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
+import com.spring.implementation.dto.CreateIamUserRequest;
 
 public interface IamService {
 
-    String createUser(RegisterRequest request) throws UserPrincipalNotFoundException;
+    String createUser(CreateIamUserRequest request);
 
-    LoginResponseDTO login(LoginDTO request);
+    TokenResponse login(LoginDTO request);
 
-    void setPassword(String keycloakUserId, String newPassword);
+    void setPassword(
+            String keycloakUserId,
+            String newPassword
+    );
 
-    void changePassword(String keycloakUserId, String currentPassword, String newPassword);
+    void changePassword(
+            String keycloakUserId,
+            String currentPassword,
+            String newPassword
+    );
+
     void resetPassword(
             String keycloakUserId,
             String newPassword
     );
+
     KeycloakUser findUserByUsername(String username);
 
     TokenResponse refreshToken(String refreshToken);
@@ -30,7 +36,4 @@ public interface IamService {
             String fullName,
             String email
     );
-
-
-
 }

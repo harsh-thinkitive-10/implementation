@@ -17,15 +17,6 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity,Long> {
     @Query(value = "SELECT * FROM doctor",nativeQuery = true)
     List<DoctorEntity> findAllDoctors();
 
-    @Query(value = "SELECT * FROM doctor WHERE doctor_id = :id",nativeQuery = true)
-    DoctorEntity findDoctorById(Long id);
-
-    @Query(value = "UPDATE doctor SET consultation_fee=: fees WHERE doctor_id = :id",nativeQuery = true)
-    void updateDoctorConsultationFee(Long id,Double fees);
-
-    @Query(value = "DELETE FROM doctor WHERE doctor_id = :id",nativeQuery = true)
-    void deleteDoctorById(Long id);
-
     Optional<DoctorEntity> findByKeycloakUserId(String keycloakUserId);
 
     @Query(value = """
@@ -70,5 +61,33 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity,Long> {
     Optional<DoctorEntity> findByUuid(UUID uuid);
 
     Page<DoctorEntity> findAll(Pageable pageable);
+
+    @Query("""
+        SELECT d
+        FROM DoctorEntity d
+        WHERE
+            (:isActive IS NULL OR d.isActive = :isActive)
+        AND (
+            :search IS NULL
+            OR :search = ''
+            OR LOWER(d.fullName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(d.email) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR d.phoneNumber LIKE CONCAT('%', :search, '%')
+        )
+        AND (
+            :specialization IS NULL
+            OR :specialization = ''
+            OR LOWER(d.specialization) = LOWER(:specialization)
+        )
+        """)
+    Page<DoctorEntity> findDoctors(
+            @Param("search") String search,
+            @Param("specialization") String specialization,
+            @Param("isActive") Boolean isActive,
+            Pageable pageable
+    );
+
+    Optional<DoctorEntity> findByUuidAndIsActiveTrue(UUID uuid);
 
 }

@@ -1,5 +1,6 @@
 package com.spring.implementation.service;
 
+import com.spring.implementation.dto.AdminDashboardDTO;
 import com.spring.implementation.dto.AdminProfileResponseDTO;
 import com.spring.implementation.dto.AdminProfileUpdateRequestDTO;
 
@@ -10,4 +11,6 @@ public interface AdminService {
     AdminProfileResponseDTO updateAdminProfile(
             AdminProfileUpdateRequestDTO request
     );
+
+    AdminDashboardDTO getDashboard();
 }

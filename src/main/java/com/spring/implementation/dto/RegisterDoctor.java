@@ -8,11 +8,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterPatient {
+public class RegisterDoctor {
 
     @NotBlank
     private String firstName;
@@ -20,11 +22,8 @@ public class RegisterPatient {
     @NotBlank
     private String lastName;
 
-    @NotNull
-    private Integer age;
-
     @NotBlank
-    private String gender;
+    private String specialization;
 
     @NotBlank
     private String phoneNumber;
@@ -33,13 +32,16 @@ public class RegisterPatient {
     @Email
     private String email;
 
-    public static CreateIamUserRequest toRequest(RegisterPatient patient) {
+    @NotNull
+    private BigDecimal consultationFee;
+
+    public static CreateIamUserRequest toRequest(RegisterDoctor doctor) {
         return new CreateIamUserRequest(
-                patient.getEmail(),
-                patient.getEmail(),
-                patient.getFirstName(),
-                patient.getLastName(),
-                "PATIENT"
+                doctor.getEmail(),
+                doctor.getEmail(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                "DOCTOR"
         );
     }
 }

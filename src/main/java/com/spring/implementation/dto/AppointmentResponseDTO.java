@@ -22,4 +22,6 @@ public class AppointmentResponseDTO {
     private PatientDTO patient;
 
     private DoctorDTO doctor;
+
+    private LocationDTO location;
 }

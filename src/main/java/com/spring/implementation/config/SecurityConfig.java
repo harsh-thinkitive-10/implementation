@@ -50,6 +50,8 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/v1/prescription/**"
                                 ).authenticated()
+                                .requestMatchers("/api/v1/location/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/tax/**").hasRole("ADMIN")
                                 .requestMatchers(
                                         "/api/v1/admin/**"
                                 ).hasRole("ADMIN")
@@ -124,7 +126,7 @@ public class SecurityConfig {
                 )
         );
 
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

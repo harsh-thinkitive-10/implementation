@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: implementation
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/implementation
+    username: root
+    password: admin@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/implementation
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+keycloak:
+  server-url: http://localhost:8081
+  realm: implementation
+  admin-client-id: implementation-admin
+  admin-client-secret: 3PZBvpjSAS1BY6tk2RQUdbWMPts7kdiRjqFKKJD2d04AjSZQyszIzYoF1DO83PnzVjtBiIPQqreLpox8bLhXdO
+  login-client-id: implementation-app
+
+resend:
+  api-key: ${RESEND_API_KEY:}
+  from: onboarding@resend.dev
+
+app:
+  frontend-url: http://localhost:5173/reset-password

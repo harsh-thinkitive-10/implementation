@@ -4,9 +4,8 @@ import com.spring.implementation.dto.*;
 
 public interface AuthService {
 
-    String registerPatient(RegisterPatient patient);
 
-    LoginResponseDTO login(LoginDTO request);
+    TokenResponse login(LoginDTO request);
 
     void setPassword(String token, String newPassword);
 

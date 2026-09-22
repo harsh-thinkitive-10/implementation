@@ -5,11 +5,13 @@ import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
 import com.spring.implementation.dto.Response;
 import com.spring.implementation.dto.enums.ResponseCode;
+import com.spring.implementation.exception.ImplException;
 import com.spring.implementation.service.PatientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,13 +20,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/patient")
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class PatientController extends AppController{
+public class PatientController extends AppController {
 
 
     private final PatientService patientService;
@@ -36,52 +39,33 @@ public class PatientController extends AppController{
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<PatientDashboardDTO> getDashboard(
-            @AuthenticationPrincipal Jwt jwt
-    ) {
+    public ResponseEntity<PatientDashboardDTO> getDashboard(@AuthenticationPrincipal Jwt jwt) {
 
-        return ResponseEntity.ok(
-                patientService.getMyDashboard(
-                        jwt.getSubject()
-                )
-        );
-    }
-
-
-    @GetMapping("/patients")
-    public ResponseEntity<Response> get() {
-
-        return data(
-                ResponseCode.OK,
-                "Patient list fetched successfully",
-                patientService.getAllPatient()
-        );
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
-        log.info("User id:{} id is calling api:", id);
-        return ResponseEntity.ok(patientService.getPatientById(id));
+        return ResponseEntity.ok(patientService.getMyDashboard(jwt.getSubject()));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<PatientDTO> registerNewPatient(@RequestBody @Valid RegisterPatient patientRequest) {
-        return ResponseEntity.ok(patientService.registerNewPatient(patientRequest));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response> registerNewPatient(@RequestBody @Valid RegisterPatient patientRequest) {
+        return data(ResponseCode.CREATED, "Patient registered successfully", patientService.registerNewPatient(patientRequest));
     }
 
-    @PatchMapping("/me")
-    public ResponseEntity<PatientDTO> updatePatient(@RequestBody @Validated PatientDTO patientDTO, @AuthenticationPrincipal Jwt jwt ){
-        return ResponseEntity.ok(patientService.updatePatient(jwt.getSubject(), patientDTO));
+    @GetMapping("/patients")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response> getAllPatients(@RequestParam(required = false) String search, @RequestParam(required = false) String gender, @RequestParam(required = false) Integer age, Pageable pageable) {
+        return data(ResponseCode.OK, "Patient list fetched successfully", patientService.getAllPatient(search, gender, age, pageable));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> changePatient(@PathVariable Long id,@RequestBody PatientDTO patientDTO) {
-        return ResponseEntity.ok(null);
+    @PutMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response> updatePatient(@PathVariable UUID uuid, @Valid @RequestBody PatientDTO patientDTO) throws ImplException {
+        return data(ResponseCode.OK, "Patient updated successfully", patientService.updatePatient(uuid, patientDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
-        patientService.deletePatient(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response> deletePatient(@PathVariable UUID uuid) throws ImplException {
+        patientService.deletePatient(uuid);
+        return data(ResponseCode.OK, "Patient Deleted Successfully", null);
     }
 }

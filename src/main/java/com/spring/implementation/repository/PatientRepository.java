@@ -89,4 +89,36 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
             @Param("doctorId") Long doctorId,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT p
+        FROM PatientEntity p
+        WHERE
+            p.isActive = true
+        AND (
+            :search IS NULL
+            OR :search = ''
+            OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.email) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR p.phoneNumber LIKE CONCAT('%', :search, '%')
+        )
+        AND (
+            :gender IS NULL
+            OR :gender = ''
+            OR p.gender = :gender
+        )
+        AND (
+            :age IS NULL
+            OR p.age = :age
+        )
+        """)
+    Page<PatientEntity> findPatients(
+            @Param("search") String search,
+            @Param("gender") String gender,
+            @Param("age") Integer age,
+            Pageable pageable
+    );
+
+    Optional<PatientEntity> findByUuidAndIsActiveTrue(UUID uuid);
+
 }
