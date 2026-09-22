@@ -21,4 +21,5 @@ public class PatientDTO {
     private String gender;
     private String phoneNumber;
     private String email;
+    private Boolean isActive;
 }

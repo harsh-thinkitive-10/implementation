@@ -23,4 +23,5 @@ public class DoctorDTO {
     private String phoneNumber;
     private String email;
     private BigDecimal consultationFee;
+    private Boolean isActive;
 }

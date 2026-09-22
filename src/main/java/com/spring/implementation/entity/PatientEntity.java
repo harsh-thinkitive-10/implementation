@@ -6,12 +6,12 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 
 import java.sql.Types;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "patient")
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,10 +44,17 @@ public class PatientEntity {
     )
     private UUID uuid;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @PrePersist
     public void prePersist() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
+        }
+
+        if (isActive == null) {
+            isActive = true;
         }
     }
 
@@ -60,6 +67,7 @@ public class PatientEntity {
                 .gender(patient.getGender())
                 .phoneNumber(patient.getPhoneNumber())
                 .email(patient.getEmail())
+                .isActive(Objects.nonNull(patient.getIsActive()) ? patient.isActive : true)
                 .build();
     }
 

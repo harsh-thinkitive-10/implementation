@@ -1,0 +1,240 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 017-create-address
+      author: harsh
+      changes:
+
+        - createTable:
+            tableName: address
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: line1
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: line2
+                  type: VARCHAR(255)
+
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: state
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: country
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: zipcode
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: address
+            columnNames: uuid
+            constraintName: uk_address_uuid
+
+  - changeSet:
+      id: 019-create-tax
+      author: harsh
+      changes:
+
+        - createTable:
+            tableName: tax
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tax_id
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: type
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: npi
+                  type: VARCHAR(50)
+
+              - column:
+                  name: billing_address_id
+                  type: BIGINT
+
+              - column:
+                  name: is_active
+                  type: TINYINT(1)
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: tax
+            columnNames: uuid
+            constraintName: uk_tax_uuid
+
+        - addForeignKeyConstraint:
+            baseTableName: tax
+            baseColumnNames: billing_address_id
+            referencedTableName: address
+            referencedColumnNames: id
+            constraintName: fk_tax_billing_address
+
+        - createIndex:
+            tableName: tax
+            indexName: idx_tax_tax_id
+            columns:
+              - column:
+                  name: tax_id
+
+  - changeSet:
+      id: 020-create-location
+      author: harsh
+      changes:
+
+        - createTable:
+            tableName: location
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: code
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+
+              - column:
+                  name: npi
+                  type: VARCHAR(50)
+
+              - column:
+                  name: billing_address_id
+                  type: BIGINT
+
+              - column:
+                  name: tax_entity_id
+                  type: BIGINT
+
+              - column:
+                  name: is_active
+                  type: TINYINT(1)
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: location
+            columnNames: uuid
+            constraintName: uk_location_uuid
+
+        - addForeignKeyConstraint:
+            baseTableName: location
+            baseColumnNames: billing_address_id
+            referencedTableName: address
+            referencedColumnNames: id
+            constraintName: fk_location_billing_address
+
+        - addForeignKeyConstraint:
+            baseTableName: location
+            baseColumnNames: tax_entity_id
+            referencedTableName: tax
+            referencedColumnNames: id
+            constraintName: fk_location_tax_entity
+
+        - createIndex:
+            tableName: location
+            indexName: idx_location_code
+            columns:
+              - column:
+                  name: code
+
+        - createIndex:
+            tableName: location
+            indexName: idx_location_name
+            columns:
+              - column:
+                  name: name
+
+        - createIndex:
+            tableName: location
+            indexName: idx_location_active
+            columns:
+              - column:
+                  name: is_active

@@ -1,23 +1,26 @@
 package com.spring.implementation.service.impl;
 
+import com.spring.implementation.dto.CreateIamUserRequest;
 import com.spring.implementation.dto.PatientDTO;
 import com.spring.implementation.dto.PatientDashboardDTO;
 import com.spring.implementation.dto.RegisterPatient;
+import com.spring.implementation.dto.enums.ResponseCode;
 import com.spring.implementation.dto.projection.PatientDashboardProjection;
 import com.spring.implementation.entity.PatientEntity;
+import com.spring.implementation.exception.ImplException;
 import com.spring.implementation.exception.PatientNotFoundException;
 import com.spring.implementation.repository.PatientRepository;
 import com.spring.implementation.service.AuthService;
+import com.spring.implementation.service.IamService;
 import com.spring.implementation.service.PatientService;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -26,17 +29,50 @@ public class PatientServiceImpl implements PatientService{
 
     private final PatientRepository patientRepository;
     private final AuthService authService;
+    private final IamService iamService;
 
 
     @Override
-    @Cacheable(cacheNames = "get patient")
-    public List<PatientDTO> getAllPatient() {
-        List<PatientEntity> patients = patientRepository.findAll();
-        List<PatientDTO> patientDTOS = new ArrayList<>();
-        for(PatientEntity patient : patients){
-            patientDTOS.add(PatientEntity.toDTO(patient));
-        }
-        return patientDTOS;
+    @Transactional
+    public PatientDTO registerNewPatient(RegisterPatient patientRequest) {
+
+        CreateIamUserRequest iamRequest =
+                RegisterPatient.toRequest(patientRequest);
+
+        String keycloakUserId =
+                iamService.createUser(iamRequest);
+
+        PatientEntity patient = PatientEntity.builder()
+                .fullName(patientRequest.getFirstName()+" "+patientRequest.getLastName())
+                .age(patientRequest.getAge())
+                .gender(patientRequest.getGender())
+                .phoneNumber(patientRequest.getPhoneNumber())
+                .email(patientRequest.getEmail())
+                .keycloakUserId(keycloakUserId)
+                .build();
+
+        PatientEntity savedPatient =
+                patientRepository.save(patient);
+
+        return PatientEntity.toDTO(savedPatient);
+    }
+
+    @Override
+    public Page<PatientDTO> getAllPatient(
+            String search,
+            String gender,
+            Integer age,
+            Pageable pageable
+    ) {
+        Page<PatientEntity> patients =
+                patientRepository.findPatients(
+                        search,
+                        gender,
+                        age,
+                        pageable
+                );
+
+        return patients.map(PatientEntity::toDTO);
     }
 
     @Override
@@ -44,48 +80,6 @@ public class PatientServiceImpl implements PatientService{
     public PatientDTO getPatientById(Long id) {
         PatientEntity patient = patientRepository.findById(id).orElseThrow(()->new PatientNotFoundException(String.format("Patient not found with id %d",id)));
         return PatientEntity.toDTO(patient);
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    @Override
-    public PatientDTO registerNewPatient(@NonNull RegisterPatient patientRequest) {
-        String userId = authService.registerPatient(patientRequest);
-        PatientEntity patient = PatientEntity.builder().fullName(patientRequest.getFirstName()+" " + patientRequest.getLastName())
-                .age(patientRequest.getAge())
-                .gender(patientRequest.getGender())
-                .phoneNumber(patientRequest.getPhoneNumber())
-                .email(patientRequest.getEmail())
-                .keycloakUserId(userId)
-                .build();
-        return PatientEntity.toDTO(patientRepository.save(patient));
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    @Override
-    public PatientDTO updatePatient(String keycloakUserId, PatientDTO patientDTO) {
-        PatientEntity patient = patientRepository.findByKeycloakUserId(keycloakUserId).orElseThrow(() -> new RuntimeException("Patient not found."));
-
-        if (patientDTO.getFullName() != null) {
-            patient.setFullName(patientDTO.getFullName());
-        }
-
-        if (patientDTO.getGender() != null) {
-            patient.setGender(patientDTO.getGender());
-        }
-
-        if (patientDTO.getEmail() != null) {
-            patient.setEmail(patientDTO.getEmail());
-        }
-
-        if (patientDTO.getAge() != null) {
-            patient.setAge(patientDTO.getAge());
-        }
-
-        if (patientDTO.getPhoneNumber() != null) {
-            patient.setPhoneNumber(patientDTO.getPhoneNumber());
-        }
-
-        return PatientEntity.toDTO(patientRepository.save(patient));
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -127,5 +121,38 @@ public class PatientServiceImpl implements PatientService{
                 );
 
         return PatientDashboardDTO.toDTO(projection);
+    }
+
+    @Override
+    @Transactional
+    public PatientDTO updatePatient(UUID uuid, PatientDTO patientDTO) throws ImplException {
+        PatientEntity patient = patientRepository.findByUuidAndIsActiveTrue(uuid)
+                .orElseThrow(() -> new ImplException(ResponseCode.NOT_FOUND,"Patient not found"));
+
+        patient.setFullName(patientDTO.getFullName());
+        patient.setAge(patientDTO.getAge());
+        patient.setGender(patientDTO.getGender());
+        patient.setPhoneNumber(patientDTO.getPhoneNumber());
+        patient.setEmail(patientDTO.getEmail());
+
+        iamService.updateUser(
+                patient.getKeycloakUserId(),
+                patient.getFullName(),
+                patient.getEmail()
+        );
+
+        PatientEntity updatedPatient = patientRepository.save(patient);
+
+        return PatientEntity.toDTO(updatedPatient);
+    }
+
+    @Override
+    @Transactional
+    public void deletePatient(UUID uuid) throws ImplException {
+        PatientEntity patient = patientRepository.findByUuidAndIsActiveTrue(uuid)
+                .orElseThrow(() -> new ImplException(ResponseCode.NOT_FOUND,"Patient not found"));
+
+        patient.setIsActive(false);
+        patientRepository.save(patient);
     }
 }

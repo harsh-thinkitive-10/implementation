@@ -17,17 +17,10 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 public class AuthServiceImpl implements AuthService {
 
     private final IamService iamService;
-    @Override
-    public String registerPatient(RegisterPatient registerPatient) {
-        try {
-            return iamService.createUser(RegisterPatient.toRequest(registerPatient));
-        } catch (UserPrincipalNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @Override
-    public LoginResponseDTO login(LoginDTO request) {
+    public TokenResponse login(LoginDTO request) {
         return iamService.login(request);
     }
 

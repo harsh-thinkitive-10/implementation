@@ -1,6 +1,7 @@
 package com.spring.implementation.service.impl;
 
 import com.spring.implementation.dto.*;
+import com.spring.implementation.dto.CreateIamUserRequest;
 import com.spring.implementation.exception.UserNameAlreadyExitsException;
 import com.spring.implementation.service.IamService;
 import jakarta.ws.rs.BadRequestException;
@@ -30,23 +31,17 @@ public class IamServiceImpl implements IamService {
     private final KeycloakProperties keycloakProperties;
 
     @Override
-    public String createUser(RegisterRequest request) {
+    public String createUser(CreateIamUserRequest request) {
 
-        // =========================================================
-        // 1. Create Keycloak User Representation
-        // =========================================================
         UserRepresentation user = new UserRepresentation();
 
-        user.setUsername(request.getEmail());
-        user.setEmail(request.getEmail());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
         user.setEnabled(true);
         user.setEmailVerified(true);
 
-        // =========================================================
-        // 2. Create User in Keycloak
-        // =========================================================
         RealmResource realmResource =
                 keycloak.realm(keycloakProperties.getRealm());
 
@@ -60,7 +55,7 @@ public class IamServiceImpl implements IamService {
 
             if (response.getStatus() == 409) {
                 throw new UserNameAlreadyExitsException(
-                        request.getUsername() + " already exists"
+                        request.username() + " already exists"
                 );
             }
 
@@ -71,9 +66,6 @@ public class IamServiceImpl implements IamService {
                 );
             }
 
-            // =====================================================
-            // 3. Get Keycloak User ID
-            // =====================================================
             String location =
                     response.getHeaderString("Location");
 
@@ -88,59 +80,23 @@ public class IamServiceImpl implements IamService {
                             location.lastIndexOf("/") + 1
                     );
 
-            // =====================================================
-            // 4. Create Password Credential
-            // =====================================================
-            CredentialRepresentation credential =
-                    new CredentialRepresentation();
-
-            credential.setType(
-                    CredentialRepresentation.PASSWORD
-            );
-
-            credential.setValue(
-                    request.getPassword()
-            );
-
-            credential.setTemporary(true);
-
-            // =====================================================
-            // 5. Set Password
-            // =====================================================
-            keycloak
-                    .realm(keycloakProperties.getRealm())
-                    .users()
-                    .get(userId)
-                    .resetPassword(credential);
-
-            // =====================================================
-            // 6. Get Realm Role
-            // =====================================================
             RoleRepresentation role =
-                    keycloak
-                            .realm(keycloakProperties.getRealm())
+                    realmResource
                             .roles()
-                            .get(request.getRole())
+                            .get(request.role())
                             .toRepresentation();
 
-            // =====================================================
-            // 7. Assign Realm Role
-            // =====================================================
-            keycloak
-                    .realm(keycloakProperties.getRealm())
+            realmResource
                     .users()
                     .get(userId)
                     .roles()
                     .realmLevel()
                     .add(List.of(role));
 
-            // =====================================================
-            // 8. Return Keycloak User ID
-            // =====================================================
             log.info(
                     "Keycloak user created successfully. userId={}, role={}",
                     userId,
-                    request.getRole()
+                    request.role()
             );
 
             return userId;
@@ -151,17 +107,13 @@ public class IamServiceImpl implements IamService {
     }
 
     @Override
-    public LoginResponseDTO login(LoginDTO request) {
+    public TokenResponse login(LoginDTO request) {
 
         String tokenUrl =
                 keycloakProperties.getServerUrl()
                         + "/realms/"
                         + keycloakProperties.getRealm()
                         + "/protocol/openid-connect/token";
-
-        log.info("Keycloak token URL: {}", tokenUrl);
-        log.info("Keycloak login client: {}", keycloakProperties.getLoginClientId());
-        log.info("Login username: {}", request.getUsername());
 
         return webClientBuilder
                 .build()
@@ -170,14 +122,18 @@ public class IamServiceImpl implements IamService {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(
                         BodyInserters.fromFormData(
-                                        "grant_type", "password"
-                                ).with(
+                                        "grant_type",
+                                        "password"
+                                )
+                                .with(
                                         "client_id",
                                         keycloakProperties.getLoginClientId()
-                                ).with(
+                                )
+                                .with(
                                         "username",
                                         request.getUsername()
-                                ).with(
+                                )
+                                .with(
                                         "password",
                                         request.getPassword()
                                 )
@@ -187,6 +143,7 @@ public class IamServiceImpl implements IamService {
                         status -> status.isError(),
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> {
+
                                     log.error(
                                             "Keycloak login failed. Status={}, Body={}",
                                             response.statusCode(),
@@ -197,19 +154,26 @@ public class IamServiceImpl implements IamService {
                                             new RuntimeException(
                                                     "Keycloak login failed: "
                                                             + errorBody
-                                            ));
+                                            )
+                                    );
                                 })
                 )
-                .bodyToMono(LoginResponseDTO.class)
+                .bodyToMono(TokenResponse.class)
                 .block();
     }
 
     @Override
-    public void setPassword(String keycloakUserId, String newPassword) {
+    public void setPassword(
+            String keycloakUserId,
+            String newPassword
+    ) {
 
-        CredentialRepresentation credential = new CredentialRepresentation();
+        CredentialRepresentation credential =
+                new CredentialRepresentation();
 
-        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setType(
+                CredentialRepresentation.PASSWORD
+        );
 
         credential.setValue(newPassword);
 
@@ -224,12 +188,13 @@ public class IamServiceImpl implements IamService {
 
     @Override
     public void changePassword(
+
+
             String keycloakUserId,
             String currentPassword,
             String newPassword
     ) {
 
-        // 1. Get user from Keycloak
         UserRepresentation user =
                 keycloak
                         .realm(keycloakProperties.getRealm())
@@ -246,13 +211,11 @@ public class IamServiceImpl implements IamService {
             );
         }
 
-        // 2. Verify current password
         verifyCurrentPassword(
                 username,
                 currentPassword
         );
 
-        // 3. Create new password credential
         CredentialRepresentation credential =
                 new CredentialRepresentation();
 
@@ -264,7 +227,6 @@ public class IamServiceImpl implements IamService {
 
         credential.setTemporary(false);
 
-        // 4. Change password
         keycloak
                 .realm(keycloakProperties.getRealm())
                 .users()
@@ -276,7 +238,6 @@ public class IamServiceImpl implements IamService {
                 keycloakUserId
         );
     }
-
 
     private void verifyCurrentPassword(
             String username,
@@ -389,8 +350,18 @@ public class IamServiceImpl implements IamService {
                         status -> status.isError(),
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> {
-                                    log.error("Keycloak token refresh failed. Status={}, Body={}", response.statusCode(), errorBody);
-                                    return reactor.core.publisher.Mono.error(new RuntimeException("Token refresh failed"));
+
+                                    log.error(
+                                            "Keycloak token refresh failed. Status={}, Body={}",
+                                            response.statusCode(),
+                                            errorBody
+                                    );
+
+                                    return reactor.core.publisher.Mono.error(
+                                            new RuntimeException(
+                                                    "Token refresh failed"
+                                            )
+                                    );
                                 })
                 )
                 .bodyToMono(TokenResponse.class)
@@ -470,7 +441,6 @@ public class IamServiceImpl implements IamService {
                 .resetPassword(credential);
     }
 
-
     @Override
     public void updateUser(
             String keycloakUserId,
@@ -511,6 +481,4 @@ public class IamServiceImpl implements IamService {
                 keycloakUserId
         );
     }
-
 }
-

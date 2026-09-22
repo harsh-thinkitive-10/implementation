@@ -1,5 +1,6 @@
 package com.spring.implementation.service.impl;
 
+import com.spring.implementation.dto.AdminDashboardDTO;
 import com.spring.implementation.dto.AdminProfileResponseDTO;
 import com.spring.implementation.dto.AdminProfileUpdateRequestDTO;
 import com.spring.implementation.entity.AdminEntity;
@@ -25,11 +26,7 @@ public class AdminServiceImpl implements AdminService {
 
         String keycloakUserId = getAuthenticatedUserId();
 
-        AdminEntity admin = adminRepository
-                .findByKeycloakUserId(keycloakUserId)
-                .orElseThrow(() ->
-                        new RuntimeException("Admin not found")
-                );
+        AdminEntity admin = adminRepository.findByKeycloakUserId(keycloakUserId).orElseThrow(() -> new RuntimeException("Admin not found"));
 
         return AdminProfileResponseDTO.builder()
                 .uuid(admin.getUuid())
@@ -40,17 +37,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public AdminProfileResponseDTO updateAdminProfile(
-            AdminProfileUpdateRequestDTO request
-    ) {
+    public AdminProfileResponseDTO updateAdminProfile(AdminProfileUpdateRequestDTO request) {
 
         String keycloakUserId = getAuthenticatedUserId();
 
-        AdminEntity admin = adminRepository
-                .findByKeycloakUserId(keycloakUserId)
-                .orElseThrow(() ->
-                        new RuntimeException("Admin not found")
-                );
+        AdminEntity admin = adminRepository.findByKeycloakUserId(keycloakUserId).orElseThrow(() -> new RuntimeException("Admin not found"));
 
         /*
          * Update DB
@@ -58,17 +49,12 @@ public class AdminServiceImpl implements AdminService {
         admin.setFullName(request.getFullName());
         admin.setEmail(request.getEmail());
 
-        AdminEntity updatedAdmin =
-                adminRepository.save(admin);
+        AdminEntity updatedAdmin = adminRepository.save(admin);
 
         /*
          * Update Keycloak
          */
-        iamService.updateUser(
-                keycloakUserId,
-                request.getFullName(),
-                request.getEmail()
-        );
+        iamService.updateUser(keycloakUserId, request.getFullName(), request.getEmail());
 
         return AdminProfileResponseDTO.builder()
                 .uuid(updatedAdmin.getUuid())
@@ -77,20 +63,30 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
+    @Override
+    public AdminDashboardDTO getDashboard() {
+        return AdminDashboardDTO.builder()
+                .totalPatients(adminRepository.countPatients())
+                .totalDoctors(adminRepository.countDoctors())
+                .totalLocations(adminRepository.countLocations())
+                .totalAppointments(adminRepository.countAppointments())
+                .todayAppointments(adminRepository.countTodayAppointments())
+                .scheduledAppointments(adminRepository.countScheduledAppointments())
+                .completedAppointments(adminRepository.countCompletedAppointments())
+                .cancelledAppointments(adminRepository.countCancelledAppointments())
+                .build();
+    }
+
     private String getAuthenticatedUserId() {
 
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null
-                || !authentication.isAuthenticated()) {
-            throw new IllegalStateException(
-                    "User is not authenticated"
-            );
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("User is not authenticated");
         }
 
         return authentication.getName();
     }
+
+
 }

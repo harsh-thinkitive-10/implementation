@@ -19,29 +19,19 @@ public class AdminController extends AppController {
 
     @GetMapping("/profile")
     public ResponseEntity<Response> getAdminProfile() {
-
-        AdminProfileResponseDTO response =
-                adminService.getAdminProfile();
-
-        return data(
-                ResponseCode.OK,
-                "Admin profile fetched successfully",
-                response
-        );
+        AdminProfileResponseDTO response = adminService.getAdminProfile();
+        return data(ResponseCode.OK, "Admin profile fetched successfully", response);
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Response> updateAdminProfile(
-            @Valid @RequestBody AdminProfileUpdateRequestDTO request
-    ) {
+    public ResponseEntity<Response> updateAdminProfile(@Valid @RequestBody AdminProfileUpdateRequestDTO request) {
+        AdminProfileResponseDTO response = adminService.updateAdminProfile(request);
 
-        AdminProfileResponseDTO response =
-                adminService.updateAdminProfile(request);
+        return data(ResponseCode.OK, "Admin profile updated successfully", response);
+    }
 
-        return data(
-                ResponseCode.OK,
-                "Admin profile updated successfully",
-                response
-        );
+    @GetMapping("/dashboard")
+    public ResponseEntity<Response> getDashboard() {
+        return data(ResponseCode.OK, "Admin dashboard fetched successfully", adminService.getDashboard());
     }
 }

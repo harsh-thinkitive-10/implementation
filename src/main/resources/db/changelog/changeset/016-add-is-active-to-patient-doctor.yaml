@@ -1,0 +1,26 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 016-add-is-active-to-patient-doctor
+      author: harsh
+      changes:
+
+        - addColumn:
+            tableName: patient
+            columns:
+              - column:
+                  name: is_active
+                  type: TINYINT(1)
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+        - addColumn:
+            tableName: doctor
+            columns:
+              - column:
+                  name: is_active
+                  type: TINYINT(1)
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
