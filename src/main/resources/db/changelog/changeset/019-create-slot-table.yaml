@@ -1,0 +1,102 @@
+databaseChangeLog:
+  - changeSet:
+      id: 019-create-slot-table
+      author: implementation
+      changes:
+
+        - createTable:
+            tableName: slot
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: doctor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: appointment_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: slot_date
+                  type: date
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: start_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: end_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: slot
+            columnNames: uuid
+            constraintName: uk_slot_uuid
+
+        - addForeignKeyConstraint:
+            baseTableName: slot
+            baseColumnNames: doctor_id
+            referencedTableName: doctor
+            referencedColumnNames: doctor_id
+            constraintName: fk_slot_doctor
+
+        - addForeignKeyConstraint:
+            baseTableName: slot
+            baseColumnNames: location_id
+            referencedTableName: location
+            referencedColumnNames: id
+            constraintName: fk_slot_location
+
+        - addForeignKeyConstraint:
+            baseTableName: slot
+            baseColumnNames: appointment_id
+            referencedTableName: appointment
+            referencedColumnNames: appointment_id
+            constraintName: fk_slot_appointment
+
+        - createIndex:
+            tableName: slot
+            indexName: idx_slot_doctor_date
+            columns:
+              - column:
+                  name: doctor_id
+              - column:
+                  name: slot_date
+
+        - createIndex:
+            tableName: slot
+            indexName: idx_slot_location_date
+            columns:
+              - column:
+                  name: location_id
+              - column:
+                  name: slot_date

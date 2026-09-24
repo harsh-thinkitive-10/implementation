@@ -1,0 +1,246 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020-create-patient-charting-tables
+      author: harsh
+
+      changes:
+
+        # ==================== ALLERGY ====================
+
+        - createTable:
+            tableName: allergy
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: allergen
+                  type: VARCHAR(255)
+              - column:
+                  name: reaction
+                  type: VARCHAR(255)
+              - column:
+                  name: severity
+                  type: VARCHAR(50)
+              - column:
+                  name: onset_date
+                  type: DATETIME(6)
+              - column:
+                  name: source
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+              - column:
+                  name: notes
+                  type: VARCHAR(1000)
+
+        - addForeignKeyConstraint:
+            baseTableName: allergy
+            baseColumnNames: patient_id
+            referencedTableName: patient
+            referencedColumnNames: patient_id
+            constraintName: fk_allergy_patient
+
+        - createIndex:
+            tableName: allergy
+            indexName: idx_allergy_patient
+            columns:
+              - column:
+                  name: patient_id
+
+        # ==================== DOCUMENT ====================
+
+        - createTable:
+            tableName: patient_document
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_type
+                  type: VARCHAR(100)
+              - column:
+                  name: file_type
+                  type: VARCHAR(100)
+              - column:
+                  name: file_url
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: uploaded_by
+                  type: VARCHAR(255)
+
+        - addForeignKeyConstraint:
+            baseTableName: patient_document
+            baseColumnNames: patient_id
+            referencedTableName: patient
+            referencedColumnNames: patient_id
+            constraintName: fk_patient_document_patient
+
+        - createIndex:
+            tableName: patient_document
+            indexName: idx_patient_document_patient
+            columns:
+              - column:
+                  name: patient_id
+
+        # ==================== VITAL ====================
+
+        - createTable:
+            tableName: vital
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: CHAR(36)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: systolic
+                  type: VARCHAR(50)
+              - column:
+                  name: diastolic
+                  type: VARCHAR(50)
+              - column:
+                  name: blood_pressure_position
+                  type: VARCHAR(50)
+
+              - column:
+                  name: temperature
+                  type: VARCHAR(50)
+              - column:
+                  name: temperature_unit
+                  type: VARCHAR(20)
+              - column:
+                  name: temperature_route
+                  type: VARCHAR(50)
+
+              - column:
+                  name: heart_rate
+                  type: VARCHAR(50)
+              - column:
+                  name: heart_rate_rhythm
+                  type: VARCHAR(50)
+              - column:
+                  name: respiratory_rate
+                  type: VARCHAR(50)
+
+              - column:
+                  name: spo2
+                  type: VARCHAR(50)
+              - column:
+                  name: on_room_air
+                  type: TINYINT(1)
+
+              - column:
+                  name: weight
+                  type: VARCHAR(50)
+              - column:
+                  name: weight_unit
+                  type: VARCHAR(20)
+
+              - column:
+                  name: height_feet
+                  type: VARCHAR(20)
+              - column:
+                  name: height_inches
+                  type: VARCHAR(20)
+              - column:
+                  name: bmi
+                  type: VARCHAR(50)
+
+              - column:
+                  name: vision_od
+                  type: VARCHAR(50)
+              - column:
+                  name: vision_os
+                  type: VARCHAR(50)
+              - column:
+                  name: vision_corrected
+                  type: VARCHAR(50)
+
+              - column:
+                  name: hearing_right
+                  type: VARCHAR(50)
+              - column:
+                  name: hearing_left
+                  type: VARCHAR(50)
+              - column:
+                  name: hearing_aid
+                  type: VARCHAR(50)
+
+              - column:
+                  name: gait
+                  type: VARCHAR(50)
+              - column:
+                  name: assistive_device
+                  type: VARCHAR(100)
+
+        - addForeignKeyConstraint:
+            baseTableName: vital
+            baseColumnNames: patient_id
+            referencedTableName: patient
+            referencedColumnNames: patient_id
+            constraintName: fk_vital_patient
+
+        - createIndex:
+            tableName: vital
+            indexName: idx_vital_patient
+            columns:
+              - column:
+                  name: patient_id

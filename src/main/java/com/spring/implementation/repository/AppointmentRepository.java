@@ -1,5 +1,6 @@
 package com.spring.implementation.repository;
 
+import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.projection.AppointmentAdminView;
 import com.spring.implementation.dto.projection.AppointmentDoctorView;
 import com.spring.implementation.dto.projection.AppointmentPatientView;
@@ -152,4 +153,9 @@ public interface AppointmentRepository
 
 
     Optional<AppointmentEntity> findByUuid(UUID uuid);
+
+    Page<AppointmentResponseDTO> findAppointmentsForDoctorByUuid(
+        @Param("uuid") UUID uuid,
+        Pageable pageable
+    );
 }

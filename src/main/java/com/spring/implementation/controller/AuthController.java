@@ -3,7 +3,7 @@ package com.spring.implementation.controller;
 import com.spring.implementation.dto.*;
 import com.spring.implementation.dto.enums.ResponseCode;
 import com.spring.implementation.service.AuthService;
-import com.spring.implementation.service.PasswordResetService;
+import com.spring.implementation.service.PasswordService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.time.Duration;
 public class AuthController extends AppController {
 
     private final AuthService authService;
-    private final PasswordResetService passwordResetService;
+    private final PasswordService passwordService;
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@Valid @RequestBody LoginDTO request, HttpServletResponse response) {
@@ -57,7 +57,7 @@ public class AuthController extends AppController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 
-        passwordResetService.requestPasswordReset(request.username());
+        passwordService.requestPasswordReset(request.username());
 
         return ResponseEntity.ok(new ForgotPasswordResponse(true, "If an account exists, a password reset link has been sent."));
     }
@@ -65,7 +65,7 @@ public class AuthController extends AppController {
     @PostMapping("/reset-password")
     public ResponseEntity<ResetPasswordResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
 
-        passwordResetService.resetPassword(request.token(), request.newPassword());
+        passwordService.resetPassword(request.token(), request.newPassword());
 
         return ResponseEntity.ok(new ResetPasswordResponse(true, "Password reset successfully."));
     }
@@ -79,7 +79,7 @@ public class AuthController extends AppController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return data(ResponseCode.OK, "refresh Successfull", LoginResponseDTO.builder().accessToken(tokens.accessToken()).expiresIn(tokens.expiresIn()).tokenType("Bearer").build());
+        return data(ResponseCode.OK, "refresh Successfully", LoginResponseDTO.builder().accessToken(tokens.accessToken()).expiresIn(tokens.expiresIn()).tokenType("Bearer").build());
     }
 
     @PostMapping("/logout")

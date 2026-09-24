@@ -6,15 +6,19 @@ import com.spring.implementation.dto.AppointmentResponseDTO;
 import com.spring.implementation.dto.Response;
 import com.spring.implementation.dto.enums.AppointmentStatus;
 import com.spring.implementation.dto.enums.ResponseCode;
+import com.spring.implementation.exception.ImplException;
 import com.spring.implementation.service.AppointmentService;
+import com.spring.implementation.service.SlotService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class AppointmentController extends AppController {
 
     private final AppointmentService appointmentService;
+    private final SlotService slotService;
 
     @GetMapping("/admin")
     public ResponseEntity<Response> getAllAppointments(@ParameterObject AppointmentFilterDTO filter, @ParameterObject Pageable pageable) {
@@ -40,8 +45,21 @@ public class AppointmentController extends AppController {
         return data(ResponseCode.OK, "Patient appointment list fetched successfully", appointmentService.getPatientAppointments(filter, pageable));
     }
 
+    @GetMapping("/doctor/calendar/{uuid}")
+    public ResponseEntity<Response> getDoctorCalendar(
+            @PathVariable UUID uuid,
+            @RequestParam Instant start,
+            @RequestParam Instant end) {
+
+        return data(
+                ResponseCode.OK,
+                "Doctor appointment calendar fetched successfully",
+                appointmentService.getDoctorCalendar(uuid, start, end)
+        );
+    }
+
     @PostMapping
-    public ResponseEntity<Response> createNewAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO) {
+    public ResponseEntity<Response> createNewAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO) throws ImplException {
 
         AppointmentResponseDTO response = appointmentService.createNewAppointment(appointmentRequestDTO);
 
@@ -53,5 +71,18 @@ public class AppointmentController extends AppController {
         appointmentService.updateAppointmentStatus(uuid, status);
 
         return data(ResponseCode.OK, "Appointment status updated successfully", null);
+    }
+
+    @GetMapping("/available-slots")
+    public ResponseEntity<Response> getAvailableSlots(
+            @RequestParam UUID doctorUuid,
+            @RequestParam UUID locationUuid,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant date
+    ) {
+        return data(
+                ResponseCode.OK,
+                "Available slots fetched successfully",
+                slotService.getAvailableSlots(doctorUuid, locationUuid, date)
+        );
     }
 }

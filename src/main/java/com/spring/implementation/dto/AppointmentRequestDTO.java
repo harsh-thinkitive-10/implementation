@@ -1,11 +1,9 @@
 package com.spring.implementation.dto;
 
-import com.spring.implementation.dto.enums.AppointmentStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -20,9 +18,6 @@ public class AppointmentRequestDTO {
 
     @NotBlank
     private String reasonForVisit;
-
-    @NotNull
-    private AppointmentStatus status;
 
     @NotNull
     private UUID patientUuid;

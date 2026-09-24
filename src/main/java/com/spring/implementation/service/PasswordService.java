@@ -1,6 +1,6 @@
 package com.spring.implementation.service;
 
-public interface PasswordResetService {
+public interface PasswordService {
     void requestPasswordReset(String username);
 
     void resetPassword(
